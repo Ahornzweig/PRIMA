@@ -15,7 +15,7 @@ namespace L02_FirstFudge {
         //let viewport: f.Viewport = new f.Viewport();
         //viewport.initialize("viewport", null, null, canvas);
 
-        f.RenderManager.initialize();
+        f.RenderManager.initialize(); 
         f.Debug.log(canvas);
 
         let node: f.Node = new f.Node("Quad");
