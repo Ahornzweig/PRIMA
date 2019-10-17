@@ -13,7 +13,7 @@ namespace L02_FirstFudge
         let node: f.Node = new f.Node("Quad");
         let mesh: f.MeshQuad = new f.MeshQuad();
         let cmpMesh: f.Component = new f.ComponentMesh(mesh);
-        let mtrSolidWhite: f.Material = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1,1,1,1)));
+        let mtrSolidWhite: f.Material = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
         let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
         cmpCamera.pivot.translateZ(35);
