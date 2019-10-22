@@ -8,8 +8,6 @@ var L02_FirstFudge;
     function init(_evevt) {
         let canvas = document.querySelector("canvas");
         console.log(canvas);
-        //let viewport: f.Viewport = new f.Viewport();
-        //viewport.initialize("viewport", null, null, canvas);
         f.RenderManager.initialize();
         f.Debug.log(canvas);
         let node = new f.Node("Quad");
