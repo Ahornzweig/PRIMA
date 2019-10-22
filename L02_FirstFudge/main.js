@@ -15,15 +15,17 @@ var L02_FirstFudge;
         let cmpMesh = new f.ComponentMesh(mesh);
         let mtrSolidWhite = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
         let cmpMaterial = new f.ComponentMaterial(mtrSolidWhite);
-        let cmpCamera = new f.ComponentCamera();
-        cmpCamera.pivot.translateZ(5);
         node.addComponent(cmpMesh);
         node.addComponent(cmpMaterial);
+        let cmpCamera = new f.ComponentCamera();
+        cmpCamera.pivot.translateZ(5);
         L02_FirstFudge.viewport = new f.Viewport();
         L02_FirstFudge.viewport.initialize("Viewport", node, cmpCamera, canvas);
         f.Debug.log(L02_FirstFudge.viewport);
+        //viewport.draw();
         setInterval(function () {
-            cmpMesh.pivot.rotateY(1);
+            cmpMesh.pivot.rotateY(2);
+            cmpMesh.pivot.rotateX(.5);
             L02_FirstFudge.viewport.draw();
         }, 1000 / 25);
     }

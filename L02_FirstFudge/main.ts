@@ -18,20 +18,25 @@ namespace L02_FirstFudge {
         let node: f.Node = new f.Node("Quad");
         let mesh: f.MeshCube = new f.MeshCube();
         let cmpMesh: f.ComponentMesh = new f.ComponentMesh(mesh);
-
+        
         let mtrSolidWhite: f.Material = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
         let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
-        let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
-        cmpCamera.pivot.translateZ(5);
+        
         node.addComponent(cmpMesh);
         node.addComponent(cmpMaterial);
+
+        let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
+        cmpCamera.pivot.translateZ(5);
 
         viewport = new f.Viewport();
         viewport.initialize("Viewport", node, cmpCamera, canvas);
         f.Debug.log(viewport);
+        
+        //viewport.draw();
 
         setInterval(function (): void {
-            cmpMesh.pivot.rotateY(1);
+            cmpMesh.pivot.rotateY(2);
+            cmpMesh.pivot.rotateX(.5);
             viewport.draw();
         }, 1000/25);
 
