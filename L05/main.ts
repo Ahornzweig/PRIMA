@@ -10,17 +10,16 @@ namespace L05 {
 
     let keysPressed: KeyPress = {};
 
-    let max: number = 1;
-    let min: number = -1;
+    let max: number = .3;
+    let min: number = -.2;
     let vertical: number = roundIt(Math.random() * (max - min) + min);
     let horizontal: number = roundIt(Math.random() * (max - min) + min);
-    
-    let ballVektor: f.Vector3 = new f.Vector3(horizontal, vertical, 0);
+    //let ballVektor: f.Vector3 = new f.Vector3(horizontal, vertical, 0);
+
+    let points: number[] = [0, 0];
 
     let maxR: number = 0;
     let maxL: number = 0;
-    let maxVertical: number = 0;
-    let maxHorizontal: number = 0;
 
     window.addEventListener("load", init);
     let viewport: f.Viewport;
@@ -36,11 +35,23 @@ namespace L05 {
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
         cmpCamera.pivot.translateZ(42);
 
-        pRight.cmpTransform.local.translateX(20);
+        pRight.cmpTransform.local.translateX(18);
         (<f.ComponentMesh>pRight.getComponent(f.ComponentMesh)).pivot.scaleY(5);
 
-        pLeft.cmpTransform.local.translateX(-20);
+        pLeft.cmpTransform.local.translateX(-18);
         (<f.ComponentMesh>pLeft.getComponent(f.ComponentMesh)).pivot.scaleY(5);
+
+        wallTop.cmpTransform.local.translateY(13);
+        (<f.ComponentMesh>wallTop.getComponent(f.ComponentMesh)).pivot.scaleX(39);
+
+        wallBottom.cmpTransform.local.translateY(-13);
+        (<f.ComponentMesh>wallBottom.getComponent(f.ComponentMesh)).pivot.scaleX(39);
+
+        wallLeft.cmpTransform.local.translateX(-20);
+        (<f.ComponentMesh>wallLeft.getComponent(f.ComponentMesh)).pivot.scaleY(25);
+
+        wallRight.cmpTransform.local.translateX(20);
+        (<f.ComponentMesh>wallRight.getComponent(f.ComponentMesh)).pivot.scaleY(25);
 
         viewport = new f.Viewport();
         viewport.initialize("Viewport", pong, cmpCamera, canvas);
@@ -52,7 +63,6 @@ namespace L05 {
 
         f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
         f.Loop.start();
-
     }
 
     function down(_evevt: KeyboardEvent): void {
@@ -99,29 +109,56 @@ namespace L05 {
         }
         //paddlesEnd
 
-        maxHorizontal += horizontal;
-        maxVertical += vertical;
-
-        if (maxHorizontal > 21 || maxHorizontal < -21) {
-            //horizontal = horizontal;
-            horizontal = horizontal * -1;
-        } else {
-            ball.cmpTransform.local.translate(new f.Vector3(horizontal, 0, 0));
-        }
-
-        if (maxVertical > 14 || maxVertical < -14) {
-            vertical = vertical * -1;
-            //vertical = vertical;
-        } else {
-            ball.cmpTransform.local.translate(new f.Vector3(0, vertical, 0));
-        }
-
+        moveBall();
+        ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
+        console.log("left:" + points[0], "right:" + points[1]);
         f.RenderManager.update();
         viewport.draw();
     }
 
-    function roundIt(_number: number): number {
+    function moveBall(): void {
 
+        let detectpLeft: boolean = detectHit(ball.cmpTransform.local.translation, pLeft.cmpTransform.local, pLeft.getComponent(f.ComponentMesh));
+        let detectpRight: boolean = detectHit(ball.cmpTransform.local.translation, pRight.cmpTransform.local, pRight.getComponent(f.ComponentMesh));
+        let detectRight: boolean = detectHit(ball.cmpTransform.local.translation, wallRight.cmpTransform.local, wallRight.getComponent(f.ComponentMesh));
+        let detectLeft: boolean = detectHit(ball.cmpTransform.local.translation, wallLeft.cmpTransform.local, wallLeft.getComponent(f.ComponentMesh));
+        let detectTop: boolean = detectHit(ball.cmpTransform.local.translation, wallTop.cmpTransform.local, wallTop.getComponent(f.ComponentMesh));
+        let detectBottom: boolean = detectHit(ball.cmpTransform.local.translation, wallBottom.cmpTransform.local, wallBottom.getComponent(f.ComponentMesh));
+
+        if (detectpLeft || detectpRight) {
+            horizontal = horizontal * -1.1;
+            vertical = vertical * 1.1;
+
+        } else if (detectRight || detectLeft) {
+            horizontal = horizontal * -1;
+            if (detectRight) {
+                points[0] += 1;
+            } else if (detectLeft) {
+                points[1] += 1;
+            }
+        }
+
+        if (detectTop || detectBottom) {
+            vertical = vertical * -1;
+        }
+    }
+
+    function detectHit(_position: f.Vector3, _mtxBox: f.Matrix4x4, _scale: f.ComponentMesh): boolean {
+
+        let testPosition: f.Vector3 = _mtxBox.translation;
+        let testScale: f.Vector3 = _scale.pivot.scaling;
+
+        let topLeft: f.Vector3 = new f.Vector3(testPosition.x - testScale.x / 2, testPosition.y + testScale.y / 2, 0);
+        let bottomRight: f.Vector3 = new f.Vector3(testPosition.x + testScale.x / 2, testPosition.y - testScale.y / 2, 0);
+
+        if (_position.x > topLeft.x && _position.y < topLeft.y && _position.x < bottomRight.x && _position.y > bottomRight.y) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function roundIt(_number: number): number {
         return Math.round(_number * 100) / 100;
     }
 }

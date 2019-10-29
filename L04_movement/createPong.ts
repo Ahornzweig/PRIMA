@@ -1,4 +1,4 @@
-namespace L03_PongPaddels {
+namespace L04_PongPaddels {
 
     import f = FudgeCore;
 

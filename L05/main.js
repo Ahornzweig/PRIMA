@@ -5,15 +5,14 @@ var L05;
 (function (L05) {
     var f = FudgeCore;
     let keysPressed = {};
-    let max = 1;
-    let min = -1;
+    let max = .3;
+    let min = -.2;
     let vertical = roundIt(Math.random() * (max - min) + min);
     let horizontal = roundIt(Math.random() * (max - min) + min);
-    let ballVektor = new f.Vector3(horizontal, vertical, 0);
+    //let ballVektor: f.Vector3 = new f.Vector3(horizontal, vertical, 0);
+    let points = [0, 0];
     let maxR = 0;
     let maxL = 0;
-    let maxVertical = 0;
-    let maxHorizontal = 0;
     window.addEventListener("load", init);
     let viewport;
     function init(_evevt) {
@@ -23,10 +22,18 @@ var L05;
         let pong = L05.createPong();
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.pivot.translateZ(42);
-        L05.pRight.cmpTransform.local.translateX(20);
+        L05.pRight.cmpTransform.local.translateX(18);
         L05.pRight.getComponent(f.ComponentMesh).pivot.scaleY(5);
-        L05.pLeft.cmpTransform.local.translateX(-20);
+        L05.pLeft.cmpTransform.local.translateX(-18);
         L05.pLeft.getComponent(f.ComponentMesh).pivot.scaleY(5);
+        L05.wallTop.cmpTransform.local.translateY(13);
+        L05.wallTop.getComponent(f.ComponentMesh).pivot.scaleX(39);
+        L05.wallBottom.cmpTransform.local.translateY(-13);
+        L05.wallBottom.getComponent(f.ComponentMesh).pivot.scaleX(39);
+        L05.wallLeft.cmpTransform.local.translateX(-20);
+        L05.wallLeft.getComponent(f.ComponentMesh).pivot.scaleY(25);
+        L05.wallRight.cmpTransform.local.translateX(20);
+        L05.wallRight.getComponent(f.ComponentMesh).pivot.scaleY(25);
         viewport = new f.Viewport();
         viewport.initialize("Viewport", pong, cmpCamera, canvas);
         f.Debug.log(viewport);
@@ -72,24 +79,47 @@ var L05;
             }
         }
         //paddlesEnd
-        maxHorizontal += horizontal;
-        maxVertical += vertical;
-        if (maxHorizontal > 21 || maxHorizontal < -21) {
-            //horizontal = horizontal;
-            horizontal = horizontal * -1;
-        }
-        else {
-            L05.ball.cmpTransform.local.translate(new f.Vector3(horizontal, 0, 0));
-        }
-        if (maxVertical > 14 || maxVertical < -14) {
-            vertical = vertical * -1;
-            //vertical = vertical;
-        }
-        else {
-            L05.ball.cmpTransform.local.translate(new f.Vector3(0, vertical, 0));
-        }
+        moveBall();
+        L05.ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
+        console.log("left:" + points[0], "right:" + points[1]);
         f.RenderManager.update();
         viewport.draw();
+    }
+    function moveBall() {
+        let detectpLeft = detectHit(L05.ball.cmpTransform.local.translation, L05.pLeft.cmpTransform.local, L05.pLeft.getComponent(f.ComponentMesh));
+        let detectpRight = detectHit(L05.ball.cmpTransform.local.translation, L05.pRight.cmpTransform.local, L05.pRight.getComponent(f.ComponentMesh));
+        let detectRight = detectHit(L05.ball.cmpTransform.local.translation, L05.wallRight.cmpTransform.local, L05.wallRight.getComponent(f.ComponentMesh));
+        let detectLeft = detectHit(L05.ball.cmpTransform.local.translation, L05.wallLeft.cmpTransform.local, L05.wallLeft.getComponent(f.ComponentMesh));
+        let detectTop = detectHit(L05.ball.cmpTransform.local.translation, L05.wallTop.cmpTransform.local, L05.wallTop.getComponent(f.ComponentMesh));
+        let detectBottom = detectHit(L05.ball.cmpTransform.local.translation, L05.wallBottom.cmpTransform.local, L05.wallBottom.getComponent(f.ComponentMesh));
+        if (detectpLeft || detectpRight) {
+            horizontal = horizontal * -1.1;
+            vertical = vertical * 1.1;
+        }
+        else if (detectRight || detectLeft) {
+            horizontal = horizontal * -1;
+            if (detectRight) {
+                points[0] += 1;
+            }
+            else if (detectLeft) {
+                points[1] += 1;
+            }
+        }
+        if (detectTop || detectBottom) {
+            vertical = vertical * -1;
+        }
+    }
+    function detectHit(_position, _mtxBox, _scale) {
+        let testPosition = _mtxBox.translation;
+        let testScale = _scale.pivot.scaling;
+        let topLeft = new f.Vector3(testPosition.x - testScale.x / 2, testPosition.y + testScale.y / 2, 0);
+        let bottomRight = new f.Vector3(testPosition.x + testScale.x / 2, testPosition.y - testScale.y / 2, 0);
+        if (_position.x > topLeft.x && _position.y < topLeft.y && _position.x < bottomRight.x && _position.y > bottomRight.y) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
     function roundIt(_number) {
         return Math.round(_number * 100) / 100;
