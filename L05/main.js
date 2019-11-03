@@ -6,7 +6,7 @@ var L05;
     var f = FudgeCore;
     let keysPressed = {};
     let max = .3;
-    let min = -.2;
+    let min = -.3;
     let vertical = roundIt(Math.random() * (max - min) + min);
     let horizontal = roundIt(Math.random() * (max - min) + min);
     //let ballVektor: f.Vector3 = new f.Vector3(horizontal, vertical, 0);
@@ -22,18 +22,6 @@ var L05;
         let pong = L05.createPong();
         let cmpCamera = new f.ComponentCamera();
         cmpCamera.pivot.translateZ(42);
-        L05.pRight.cmpTransform.local.translateX(18);
-        L05.pRight.getComponent(f.ComponentMesh).pivot.scaleY(5);
-        L05.pLeft.cmpTransform.local.translateX(-18);
-        L05.pLeft.getComponent(f.ComponentMesh).pivot.scaleY(5);
-        L05.wallTop.cmpTransform.local.translateY(13);
-        L05.wallTop.getComponent(f.ComponentMesh).pivot.scaleX(39);
-        L05.wallBottom.cmpTransform.local.translateY(-13);
-        L05.wallBottom.getComponent(f.ComponentMesh).pivot.scaleX(39);
-        L05.wallLeft.cmpTransform.local.translateX(-20);
-        L05.wallLeft.getComponent(f.ComponentMesh).pivot.scaleY(25);
-        L05.wallRight.cmpTransform.local.translateX(20);
-        L05.wallRight.getComponent(f.ComponentMesh).pivot.scaleY(25);
         viewport = new f.Viewport();
         viewport.initialize("Viewport", pong, cmpCamera, canvas);
         f.Debug.log(viewport);
@@ -55,32 +43,32 @@ var L05;
         //f.Debug.log("update");
         //paddles
         if (keysPressed[38] == true) {
-            if (maxR <= 11) {
+            if (maxR <= 10) {
                 maxR += .5;
                 L05.pRight.cmpTransform.local.translateY(.5);
             }
         }
         else if (keysPressed[40] == true) {
-            if (maxR >= -11) {
+            if (maxR >= -10) {
                 maxR -= .5;
                 L05.pRight.cmpTransform.local.translate(new f.Vector3(0, -.5, 0));
             }
         }
         if (keysPressed[87] == true) {
-            if (maxL <= 11) {
+            if (maxL <= 10) {
                 maxL += .5;
                 L05.pLeft.cmpTransform.local.translate(f.Vector3.Y(.5));
             }
         }
         else if (keysPressed[83] == true) {
-            if (maxL >= -11) {
+            if (maxL >= -10) {
                 maxL -= .5;
                 L05.pLeft.cmpTransform.local.translate(new f.Vector3(0, -.5, 0));
             }
         }
         //paddlesEnd
-        moveBall();
         L05.ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
+        moveBall();
         console.log("left:" + points[0], "right:" + points[1]);
         f.RenderManager.update();
         viewport.draw();
@@ -93,8 +81,8 @@ var L05;
         let detectTop = detectHit(L05.ball.cmpTransform.local.translation, L05.wallTop.cmpTransform.local, L05.wallTop.getComponent(f.ComponentMesh));
         let detectBottom = detectHit(L05.ball.cmpTransform.local.translation, L05.wallBottom.cmpTransform.local, L05.wallBottom.getComponent(f.ComponentMesh));
         if (detectpLeft || detectpRight) {
-            horizontal = horizontal * -1.1;
-            vertical = vertical * 1.1;
+            horizontal = horizontal * -1.0;
+            vertical = vertical * 1.0;
         }
         else if (detectRight || detectLeft) {
             horizontal = horizontal * -1;

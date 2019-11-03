@@ -2,40 +2,19 @@
 var L05;
 (function (L05) {
     var f = FudgeCore;
-    L05.ball = new f.Node("Ball");
-    L05.pLeft = new f.Node("pLeft");
-    L05.pRight = new f.Node("pRight");
-    L05.wallTop = new f.Node("wallTop");
-    L05.wallBottom = new f.Node("wallBottom");
-    L05.wallLeft = new f.Node("wallLeft");
-    L05.wallRight = new f.Node("wallRight");
     function createPong() {
         let pong = new f.Node("Pong");
         let mesh = new f.MeshQuad();
         //let cmpMesh: f.ComponentMesh = new f.ComponentMesh(mesh);
         let mtrSolidWhite = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
         //let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
-        L05.ball.addComponent(new f.ComponentMesh(mesh));
-        L05.ball.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        L05.ball.addComponent(new f.ComponentTransform());
-        L05.pLeft.addComponent(new f.ComponentMesh(mesh));
-        L05.pLeft.addComponent(new f.ComponentMaterial(new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1)))));
-        L05.pLeft.addComponent(new f.ComponentTransform());
-        L05.pRight.addComponent(new f.ComponentMesh(mesh));
-        L05.pRight.addComponent(new f.ComponentMaterial(new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)))));
-        L05.pRight.addComponent(new f.ComponentTransform());
-        L05.wallTop.addComponent(new f.ComponentMesh(mesh));
-        L05.wallTop.addComponent(new f.ComponentMaterial(new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)))));
-        L05.wallTop.addComponent(new f.ComponentTransform());
-        L05.wallBottom.addComponent(new f.ComponentMesh(mesh));
-        L05.wallBottom.addComponent(new f.ComponentMaterial(new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1)))));
-        L05.wallBottom.addComponent(new f.ComponentTransform());
-        L05.wallLeft.addComponent(new f.ComponentMesh(mesh));
-        L05.wallLeft.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        L05.wallLeft.addComponent(new f.ComponentTransform());
-        L05.wallRight.addComponent(new f.ComponentMesh(mesh));
-        L05.wallRight.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        L05.wallRight.addComponent(new f.ComponentTransform());
+        L05.ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO, new f.Vector2(1, 1));
+        L05.pLeft = createNode("pLeft", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(-18, 0), new f.Vector2(1, 5));
+        L05.pRight = createNode("pRight", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(18, 0), new f.Vector2(1, 5));
+        L05.wallTop = createNode("wallTop", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(0, 13), new f.Vector2(40, 1));
+        L05.wallBottom = createNode("wallBottom", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(0, -13), new f.Vector2(40, 1));
+        L05.wallLeft = createNode("wallLeft", mesh, mtrSolidWhite, new f.Vector2(-20, 0), new f.Vector2(1, 26));
+        L05.wallRight = createNode("wallRight", mesh, mtrSolidWhite, new f.Vector2(20, 0), new f.Vector2(1, 26));
         pong.appendChild(L05.ball);
         pong.appendChild(L05.pLeft);
         pong.appendChild(L05.pRight);
@@ -46,5 +25,14 @@ var L05;
         return pong;
     }
     L05.createPong = createPong;
+    function createNode(_name, _mesh, _material, _translation, _scaling) {
+        let node = new f.Node(_name);
+        node.addComponent(new f.ComponentMesh(_mesh));
+        node.addComponent(new f.ComponentMaterial(_material));
+        node.addComponent(new f.ComponentTransform());
+        node.cmpTransform.local.translate(_translation.toVector3());
+        node.getComponent(f.ComponentMesh).pivot.scale(_scaling.toVector3());
+        return node;
+    }
 })(L05 || (L05 = {}));
 //# sourceMappingURL=createPong.js.map

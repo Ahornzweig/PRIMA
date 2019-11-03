@@ -2,13 +2,13 @@ namespace L05 {
 
     import f = FudgeCore;
 
-    export let ball: f.Node = new f.Node("Ball");
-    export let pLeft: f.Node = new f.Node("pLeft");
-    export let pRight: f.Node = new f.Node("pRight");
-    export let wallTop: f.Node = new f.Node("wallTop");
-    export let wallBottom: f.Node = new f.Node("wallBottom");
-    export let wallLeft: f.Node = new f.Node("wallLeft");
-    export let wallRight: f.Node = new f.Node("wallRight");
+    export let ball: f.Node;
+    export let pLeft: f.Node;
+    export let pRight: f.Node;
+    export let wallTop: f.Node;
+    export let wallBottom: f.Node;
+    export let wallLeft: f.Node;
+    export let wallRight: f.Node;
 
     export function createPong(): f.Node {
 
@@ -18,35 +18,16 @@ namespace L05 {
         //let cmpMesh: f.ComponentMesh = new f.ComponentMesh(mesh);
         let mtrSolidWhite: f.Material = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
         //let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
-    
-        ball.addComponent(new f.ComponentMesh(mesh));
-        ball.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        ball.addComponent(new f.ComponentTransform());
-    
-        pLeft.addComponent(new f.ComponentMesh(mesh));
-        pLeft.addComponent(new f.ComponentMaterial(new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1)))));
-        pLeft.addComponent(new f.ComponentTransform());
-    
-        pRight.addComponent(new f.ComponentMesh(mesh));
-        pRight.addComponent(new f.ComponentMaterial(new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)))));
-        pRight.addComponent(new f.ComponentTransform());
 
-        wallTop.addComponent(new f.ComponentMesh(mesh));
-        wallTop.addComponent(new f.ComponentMaterial(new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)))));
-        wallTop.addComponent(new f.ComponentTransform());
-
-        wallBottom.addComponent(new f.ComponentMesh(mesh));
-        wallBottom.addComponent(new f.ComponentMaterial(new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1)))));
-        wallBottom.addComponent(new f.ComponentTransform());
-
-        wallLeft.addComponent(new f.ComponentMesh(mesh));
-        wallLeft.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        wallLeft.addComponent(new f.ComponentTransform());
-
-        wallRight.addComponent(new f.ComponentMesh(mesh));
-        wallRight.addComponent(new f.ComponentMaterial(mtrSolidWhite));
-        wallRight.addComponent(new f.ComponentTransform());
-
+        ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO, new f.Vector2(1, 1));
+        pLeft = createNode("pLeft", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(-18, 0), new f.Vector2(1, 5));
+        pRight = createNode("pRight", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(18, 0), new f.Vector2(1, 5));
+        
+        wallTop = createNode("wallTop", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(0, 13), new f.Vector2(40, 1));
+        wallBottom = createNode("wallBottom", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(0, -13), new f.Vector2(40, 1));
+        wallLeft = createNode("wallLeft", mesh, mtrSolidWhite, new f.Vector2(-20, 0), new f.Vector2(1, 26));
+        wallRight = createNode("wallRight", mesh, mtrSolidWhite, new f.Vector2(20, 0), new f.Vector2(1, 26));
+  
         pong.appendChild(ball);
         pong.appendChild(pLeft);
         pong.appendChild(pRight);
@@ -56,5 +37,18 @@ namespace L05 {
         pong.appendChild(wallRight);
 
         return pong;
+    }
+
+    function createNode(_name: string, _mesh: f.Mesh, _material: f.Material, _translation: f.Vector2, _scaling: f.Vector2): f.Node {
+
+        let node: f.Node = new f.Node(_name);
+        node.addComponent(new f.ComponentMesh(_mesh));
+        node.addComponent(new f.ComponentMaterial(_material));
+        node.addComponent(new f.ComponentTransform());
+
+        node.cmpTransform.local.translate(_translation.toVector3());
+        (<f.ComponentMesh>node.getComponent(f.ComponentMesh)).pivot.scale(_scaling.toVector3());
+
+        return node;
     }
 }

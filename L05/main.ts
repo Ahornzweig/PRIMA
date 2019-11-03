@@ -11,7 +11,7 @@ namespace L05 {
     let keysPressed: KeyPress = {};
 
     let max: number = .3;
-    let min: number = -.2;
+    let min: number = -.3;
     let vertical: number = roundIt(Math.random() * (max - min) + min);
     let horizontal: number = roundIt(Math.random() * (max - min) + min);
     //let ballVektor: f.Vector3 = new f.Vector3(horizontal, vertical, 0);
@@ -34,24 +34,6 @@ namespace L05 {
 
         let cmpCamera: f.ComponentCamera = new f.ComponentCamera();
         cmpCamera.pivot.translateZ(42);
-
-        pRight.cmpTransform.local.translateX(18);
-        (<f.ComponentMesh>pRight.getComponent(f.ComponentMesh)).pivot.scaleY(5);
-
-        pLeft.cmpTransform.local.translateX(-18);
-        (<f.ComponentMesh>pLeft.getComponent(f.ComponentMesh)).pivot.scaleY(5);
-
-        wallTop.cmpTransform.local.translateY(13);
-        (<f.ComponentMesh>wallTop.getComponent(f.ComponentMesh)).pivot.scaleX(39);
-
-        wallBottom.cmpTransform.local.translateY(-13);
-        (<f.ComponentMesh>wallBottom.getComponent(f.ComponentMesh)).pivot.scaleX(39);
-
-        wallLeft.cmpTransform.local.translateX(-20);
-        (<f.ComponentMesh>wallLeft.getComponent(f.ComponentMesh)).pivot.scaleY(25);
-
-        wallRight.cmpTransform.local.translateX(20);
-        (<f.ComponentMesh>wallRight.getComponent(f.ComponentMesh)).pivot.scaleY(25);
 
         viewport = new f.Viewport();
         viewport.initialize("Viewport", pong, cmpCamera, canvas);
@@ -83,34 +65,34 @@ namespace L05 {
         //f.Debug.log("update");
         //paddles
         if (keysPressed[38] == true) {
-            if (maxR <= 11) {
+            if (maxR <= 10) {
                 maxR += .5;
                 pRight.cmpTransform.local.translateY(.5);
             }
 
         } else if (keysPressed[40] == true) {
-            if (maxR >= -11) {
+            if (maxR >= -10) {
                 maxR -= .5;
                 pRight.cmpTransform.local.translate(new f.Vector3(0, -.5, 0));
             }
         }
 
         if (keysPressed[87] == true) {
-            if (maxL <= 11) {
+            if (maxL <= 10) {
                 maxL += .5;
                 pLeft.cmpTransform.local.translate(f.Vector3.Y(.5));
             }
 
         } else if (keysPressed[83] == true) {
-            if (maxL >= -11) {
+            if (maxL >= -10) {
                 maxL -= .5;
                 pLeft.cmpTransform.local.translate(new f.Vector3(0, -.5, 0));
             }
         }
         //paddlesEnd
 
-        moveBall();
         ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
+        moveBall();
         console.log("left:" + points[0], "right:" + points[1]);
         f.RenderManager.update();
         viewport.draw();
@@ -126,8 +108,8 @@ namespace L05 {
         let detectBottom: boolean = detectHit(ball.cmpTransform.local.translation, wallBottom.cmpTransform.local, wallBottom.getComponent(f.ComponentMesh));
 
         if (detectpLeft || detectpRight) {
-            horizontal = horizontal * -1.1;
-            vertical = vertical * 1.1;
+            horizontal = horizontal * -1.0;
+            vertical = vertical * 1.0;
 
         } else if (detectRight || detectLeft) {
             horizontal = horizontal * -1;
@@ -152,6 +134,7 @@ namespace L05 {
         let bottomRight: f.Vector3 = new f.Vector3(testPosition.x + testScale.x / 2, testPosition.y - testScale.y / 2, 0);
 
         if (_position.x > topLeft.x && _position.y < topLeft.y && _position.x < bottomRight.x && _position.y > bottomRight.y) {
+           
             return true;
         } else {
             return false;
