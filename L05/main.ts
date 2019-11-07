@@ -90,10 +90,9 @@ namespace L05 {
             }
         }
         //paddlesEnd
-
         ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
         moveBall();
-        console.log("left:" + points[0], "right:" + points[1]);
+
         f.RenderManager.update();
         viewport.draw();
     }
@@ -111,6 +110,7 @@ namespace L05 {
             horizontal = horizontal * -1.0;
             vertical = vertical * 1.0;
 
+
         } else if (detectRight || detectLeft) {
             horizontal = horizontal * -1;
             if (detectRight) {
@@ -118,6 +118,13 @@ namespace L05 {
             } else if (detectLeft) {
                 points[1] += 1;
             }
+            let score: HTMLDivElement = (<HTMLDivElement>document.getElementById("score"));
+           
+            score.innerHTML = "" + points[0] + " | " + points[1] + "";
+            
+            vertical = roundIt(Math.random() * (max - min) + min);
+            horizontal = roundIt(Math.random() * (max - min) + min);
+            ball.cmpTransform.local.translation = new f.Vector3(0, 0, 0);
         }
 
         if (detectTop || detectBottom) {
@@ -134,7 +141,7 @@ namespace L05 {
         let bottomRight: f.Vector3 = new f.Vector3(testPosition.x + testScale.x / 2, testPosition.y - testScale.y / 2, 0);
 
         if (_position.x > topLeft.x && _position.y < topLeft.y && _position.x < bottomRight.x && _position.y > bottomRight.y) {
-           
+
             return true;
         } else {
             return false;

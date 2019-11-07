@@ -17,17 +17,19 @@ namespace L05 {
         let mesh: f.MeshQuad = new f.MeshQuad();
         //let cmpMesh: f.ComponentMesh = new f.ComponentMesh(mesh);
         let mtrSolidWhite: f.Material = new f.Material("SolidWhite", f.ShaderUniColor, new f.CoatColored(new f.Color(1, 1, 1, 1)));
+        let mtrBlack: f.Material = new f.Material("Black", f.ShaderUniColor, new f.CoatColored(new f.Color(0, 0, 0, 1)));
+        let mtrLightRed: f.Material = new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)));
         //let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
 
         ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO, new f.Vector2(1, 1));
         pLeft = createNode("pLeft", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(-18, 0), new f.Vector2(1, 5));
-        pRight = createNode("pRight", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(18, 0), new f.Vector2(1, 5));
-        
-        wallTop = createNode("wallTop", mesh, new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1))), new f.Vector2(0, 13), new f.Vector2(40, 1));
-        wallBottom = createNode("wallBottom", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(0, -13), new f.Vector2(40, 1));
-        wallLeft = createNode("wallLeft", mesh, mtrSolidWhite, new f.Vector2(-20, 0), new f.Vector2(1, 26));
-        wallRight = createNode("wallRight", mesh, mtrSolidWhite, new f.Vector2(20, 0), new f.Vector2(1, 26));
-  
+        pRight = createNode("pRight", mesh, mtrLightRed, new f.Vector2(18, 0), new f.Vector2(1, 5));
+
+        wallTop = createNode("wallTop", mesh, mtrLightRed, new f.Vector2(0, 13), new f.Vector2(41, 1));
+        wallBottom = createNode("wallBottom", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(0, -13), new f.Vector2(41, 1));
+        wallLeft = createNode("wallLeft", mesh, mtrBlack, new f.Vector2(-20, 0), new f.Vector2(1, 27));
+        wallRight = createNode("wallRight", mesh, mtrBlack, new f.Vector2(20, 0), new f.Vector2(1, 27));
+
         pong.appendChild(ball);
         pong.appendChild(pLeft);
         pong.appendChild(pRight);

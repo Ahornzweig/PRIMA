@@ -69,7 +69,6 @@ var L05;
         //paddlesEnd
         L05.ball.cmpTransform.local.translate(new f.Vector3(horizontal, vertical, 0));
         moveBall();
-        console.log("left:" + points[0], "right:" + points[1]);
         f.RenderManager.update();
         viewport.draw();
     }
@@ -92,6 +91,11 @@ var L05;
             else if (detectLeft) {
                 points[1] += 1;
             }
+            let score = document.getElementById("score");
+            score.innerHTML = "" + points[0] + " | " + points[1] + "";
+            vertical = roundIt(Math.random() * (max - min) + min);
+            horizontal = roundIt(Math.random() * (max - min) + min);
+            L05.ball.cmpTransform.local.translation = new f.Vector3(0, 0, 0);
         }
         if (detectTop || detectBottom) {
             vertical = vertical * -1;

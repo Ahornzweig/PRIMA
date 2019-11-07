@@ -10,11 +10,28 @@
     <script src='createPong.js'></script>
     <title>First Fudge App</title>
 </head>
- 
+<style>
+    #game {
+        position: relative;
+    }
+
+    #score {
+        position: absolute;
+        color: #2196f3;
+        font-size: 40px;
+        top: 30px;
+        left: 300px;
+        transform: translateX(-50%);
+    }    
+</style>
+
 <body>
     <h1>First Fudge App - Pong</h1>
-    <canvas width="600" height="400">
-    </canvas>
+    <div id="game">
+        <div id="score">0 | 0</div>
+        <canvas width="600" height="400">
+        </canvas>
+    </div>
 </body>
 
 </html>
