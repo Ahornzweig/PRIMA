@@ -10,7 +10,7 @@ var L05;
         let mtrBlack = new f.Material("Black", f.ShaderUniColor, new f.CoatColored(new f.Color(0, 0, 0, 1)));
         let mtrLightRed = new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)));
         //let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
-        L05.ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO, new f.Vector2(1, 1));
+        L05.ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO(), new f.Vector2(1, 1));
         L05.pLeft = createNode("pLeft", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(-18, 0), new f.Vector2(1, 5));
         L05.pRight = createNode("pRight", mesh, mtrLightRed, new f.Vector2(18, 0), new f.Vector2(1, 5));
         L05.wallTop = createNode("wallTop", mesh, mtrLightRed, new f.Vector2(0, 13), new f.Vector2(41, 1));

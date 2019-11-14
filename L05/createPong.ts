@@ -21,7 +21,7 @@ namespace L05 {
         let mtrLightRed: f.Material = new f.Material("lightRed", f.ShaderUniColor, new f.CoatColored(new f.Color(1, .3, .3, 1)));
         //let cmpMaterial: f.ComponentMaterial = new f.ComponentMaterial(mtrSolidWhite);
 
-        ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO, new f.Vector2(1, 1));
+        ball = createNode("ball", mesh, mtrSolidWhite, f.Vector2.ZERO(), new f.Vector2(1, 1));
         pLeft = createNode("pLeft", mesh, new f.Material("LightBlue", f.ShaderUniColor, new f.CoatColored(new f.Color(.6, .6, 1, 1))), new f.Vector2(-18, 0), new f.Vector2(1, 5));
         pRight = createNode("pRight", mesh, mtrLightRed, new f.Vector2(18, 0), new f.Vector2(1, 5));
 
