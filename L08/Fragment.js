@@ -1,19 +1,28 @@
 "use strict";
-var L07_FudgeCraft_Fragments;
-(function (L07_FudgeCraft_Fragments) {
+var L08_FudgeCraft_Collision;
+(function (L08_FudgeCraft_Collision) {
     var ƒ = FudgeCore;
     class Fragment extends ƒ.Node {
-        constructor(_shape) {
+        constructor(_shape, _position = ƒ.Vector3.ZERO()) {
             super("Fragment-Type" + _shape);
             this.position = new ƒ.Vector3(0, 0, 0);
             let shape = Fragment.shapes[_shape];
             for (let position of shape) {
-                let type = Fragment.getRandomEnum(L07_FudgeCraft_Fragments.CUBE_TYPE);
+                let type;
+                do {
+                    type = Fragment.getRandomEnum(L08_FudgeCraft_Collision.CUBE_TYPE);
+                } while (type == L08_FudgeCraft_Collision.CUBE_TYPE.GREY);
                 let vctPosition = ƒ.Vector3.ZERO();
                 vctPosition.set(position[0], position[1], position[2]);
-                let cube = new L07_FudgeCraft_Fragments.Cube(type, vctPosition);
+                let cube = new L08_FudgeCraft_Collision.Cube(type, vctPosition);
                 this.appendChild(cube);
             }
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
+        }
+        static getRandom() {
+            let shape = Math.floor(Math.random() * Fragment.shapes.length);
+            let fragment = new Fragment(shape);
+            return fragment;
         }
         static getShapeArray() {
             return [
@@ -31,6 +40,6 @@ var L07_FudgeCraft_Fragments;
         }
     }
     Fragment.shapes = Fragment.getShapeArray();
-    L07_FudgeCraft_Fragments.Fragment = Fragment;
-})(L07_FudgeCraft_Fragments || (L07_FudgeCraft_Fragments = {}));
+    L08_FudgeCraft_Collision.Fragment = Fragment;
+})(L08_FudgeCraft_Collision || (L08_FudgeCraft_Collision = {}));
 //# sourceMappingURL=Fragment.js.map
