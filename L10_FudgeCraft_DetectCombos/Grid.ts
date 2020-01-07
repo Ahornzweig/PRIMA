@@ -1,5 +1,4 @@
-namespace L08_FudgeCraft_Collision {
-    import ƒ = FudgeCore;
+namespace L10_FudgeCraft_DetectCombos {
     export class GridElement {
         public cube: Cube;
 
@@ -12,23 +11,22 @@ namespace L08_FudgeCraft_Collision {
         // private grid: Map<string, Cube> = new Map();
         constructor() {
             super();
-            this.push(ƒ.Vector3.ZERO(), new GridElement(new Cube(CUBE_TYPE.GREY, ƒ.Vector3.ZERO())));
         }
 
-        push(_position: ƒ.Vector3, _element: GridElement = null): void {
+        public push(_position: ƒ.Vector3, _element: GridElement = null): void {
             let key: string = this.toKey(_position);
             this.set(key, _element);
             if (_element)
                 game.appendChild(_element.cube);
         }
 
-        pull(_position: ƒ.Vector3): GridElement {
+        public pull(_position: ƒ.Vector3): GridElement {
             let key: string = this.toKey(_position);
             let element: GridElement = this.get(key);
             return element;
         }
 
-        pop(_position: ƒ.Vector3): GridElement {
+        public pop(_position: ƒ.Vector3): GridElement {
             let key: string = this.toKey(_position);
             let element: GridElement = this.get(key);
             this.delete(key);
@@ -37,7 +35,19 @@ namespace L08_FudgeCraft_Collision {
             return element;
         }
 
-        toKey(_position: ƒ.Vector3): string {
+        public findNeigbors(_of: ƒ.Vector3): GridElement[] {
+            let found: GridElement[] = [];
+            let offsets: number[][] = [[0, 0, 1], [0, 0, -1], [0, 1, 0], [0, -1, 0], [1, 0, 0], [-1, 0, 0]];
+            for (let offset of offsets) {
+                let posNeighbor: ƒ.Vector3 = ƒ.Vector3.SUM(_of, new ƒ.Vector3(...offset));
+                let neighbor: GridElement = grid.pull(posNeighbor);
+                if (neighbor)
+                    found.push(neighbor);
+            }
+            return found;
+        }
+
+        private toKey(_position: ƒ.Vector3): string {
             let position: ƒ.Vector3 = _position.map(Math.round);
             let key: string = position.toString();
             return key;

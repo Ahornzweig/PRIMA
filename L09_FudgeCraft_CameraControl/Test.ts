@@ -1,5 +1,4 @@
-namespace L08_FudgeCraft_Collision {
-    import ƒ = FudgeCore;
+namespace L09_FudgeCraft_CameraControl {
     export function test(): void {
        testGrid();
     }

@@ -1,12 +1,13 @@
 "use strict";
 var L08_FudgeCraft_Collision;
 (function (L08_FudgeCraft_Collision) {
+    var ƒ = FudgeCore;
     function test() {
         testGrid();
     }
     L08_FudgeCraft_Collision.test = test;
     function testGrid() {
-        let cube = new L08_FudgeCraft_Collision.Cube(L08_FudgeCraft_Collision.CUBE_TYPE.GREEN, L08_FudgeCraft_Collision.ƒ.Vector3.ZERO());
+        let cube = new L08_FudgeCraft_Collision.Cube(L08_FudgeCraft_Collision.CUBE_TYPE.GREEN, ƒ.Vector3.ZERO());
         L08_FudgeCraft_Collision.grid.push(cube.cmpTransform.local.translation, new L08_FudgeCraft_Collision.GridElement(cube));
         let pulled = L08_FudgeCraft_Collision.grid.pull(cube.cmpTransform.local.translation);
         logResult(cube == pulled.cube, "Grid push and pull", cube, pulled.cube, pulled);

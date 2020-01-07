@@ -1,10 +1,10 @@
-namespace L08_FudgeCraft_Collision {
-    import ƒ = FudgeCore;
+namespace L09_FudgeCraft_CameraControl {
     export class GridElement {
         public cube: Cube;
 
         constructor(_cube: Cube = null) {
             this.cube = _cube;
+            
         }
     }
 
