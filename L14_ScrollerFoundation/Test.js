@@ -11,7 +11,7 @@ var L14_ScrollerFoundation;
         let crc2 = canvas.getContext("2d");
         let txtImage = new ƒ.TextureImage();
         txtImage.image = img;
-        sprite = new Sprite("Test");
+        sprite = new L14_ScrollerFoundation.Sprite("Test");
         let rects = [
             new ƒ.Rectangle(0, 0, 360, 416),
             new ƒ.Rectangle(0, 0, 180, 208),
@@ -21,7 +21,7 @@ var L14_ScrollerFoundation;
         ];
         sprite.generate(txtImage, rects, 300, ƒ.ORIGIN2D.BOTTOMCENTER);
         ƒ.RenderManager.initialize(true, false);
-        root = new NodeSprite("Root", sprite);
+        root = new L14_ScrollerFoundation.NodeSprite("Root", sprite);
         let cmpCamera = new ƒ.ComponentCamera();
         cmpCamera.pivot.translateZ(5);
         cmpCamera.pivot.lookAt(ƒ.Vector3.ZERO());
