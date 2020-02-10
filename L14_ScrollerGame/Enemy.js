@@ -57,7 +57,7 @@ var L14_ScrollerGame;
             this.enemies = _data;
             for (let sprite of Enemy.sprites) {
                 let nodeSprite = new L14_ScrollerGame.NodeSprite(sprite.name, sprite);
-                nodeSprite.activate(false);
+                //nodeSprite.activate(false);
                 nodeSprite.addEventListener("showNext", (_event) => { _event.currentTarget.showFrameNext(); }, true);
                 this.appendChild(nodeSprite);
             }
