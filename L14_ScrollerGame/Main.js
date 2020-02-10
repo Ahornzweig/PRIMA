@@ -13,6 +13,7 @@ var L14_ScrollerGame;
     })(OBJECTTYPE = L14_ScrollerGame.OBJECTTYPE || (L14_ScrollerGame.OBJECTTYPE = {}));
     let keysPressed = {};
     let girl;
+    let name;
     /*let leafTree: Object;
     let pineTree: Object;
     let slimTree: Object;*/
@@ -43,7 +44,7 @@ var L14_ScrollerGame;
         L14_ScrollerGame.game = new L14_ScrollerGame.f.Node("Game");
         L14_ScrollerGame.level = buildLevel(txtImage);
         L14_ScrollerGame.game.appendChild(L14_ScrollerGame.level);
-        L14_ScrollerGame.Girl.generateSprites(txtImage, [[868, 0, 650, 1000, 8, 1000], [6068, 0, 650, 1000, 1, 1000]]);
+        L14_ScrollerGame.Girl.generateSprites(txtImage, [[0, 0, 650, 1000, 7, 1000], [3168, 1000, 650, 1000, 1, 1000], [3818, 1000, 650, 1000, 1, 1000]]);
         girl = new L14_ScrollerGame.Girl("GirlHero");
         L14_ScrollerGame.level.appendChild(girl);
         let viewport = new L14_ScrollerGame.f.Viewport();

@@ -23,6 +23,7 @@ namespace L14_ScrollerGame {
   export let direction: string;
   export let checkColision: f.Node;
   let girl: Girl;
+  let name: string;
 
   /*let leafTree: Object;
   let pineTree: Object;
@@ -61,7 +62,7 @@ namespace L14_ScrollerGame {
     game = new f.Node("Game");
     level = buildLevel(txtImage);
     game.appendChild(level);
-    Girl.generateSprites(txtImage, [[868, 0, 650, 1000, 8, 1000], [6068, 0, 650, 1000, 1, 1000]]);
+    Girl.generateSprites(txtImage, [[0, 0, 650, 1000, 7, 1000], [3168, 1000, 650, 1000, 1, 1000], [3818, 1000, 650, 1000, 1, 1000]]);
 
     girl = new Girl("GirlHero");
     level.appendChild(girl);

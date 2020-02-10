@@ -59,7 +59,7 @@ namespace L14_ScrollerGame {
             Girl.sprites.push(sprite);
 
             sprite = new Sprite(ACTION.W_ARM);
-            sprite.generateByGrid(_txtImage, f.Rectangle.GET(6718, 0, 490, 180), 1, f.Vector2.ZERO(), 1000, f.ORIGIN2D.TOPLEFT);
+            sprite.generateByGrid(_txtImage, f.Rectangle.GET(_values[2][0], _values[2][1], _values[2][2], _values[2][3]), _values[2][4], f.Vector2.ZERO(), _values[2][5], f.ORIGIN2D.TOPLEFT);
             Girl.arm = new NodeSprite(sprite.name, sprite);
         }
 

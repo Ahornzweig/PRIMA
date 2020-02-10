@@ -1,0 +1,11 @@
+{
+    "Game": {
+        "Level": "",
+        "Name": "",
+        "position": [[],[]],
+        "enemys": {},
+        "nature": {},
+        "ground": {},
+        "background": {}
+    }
+}

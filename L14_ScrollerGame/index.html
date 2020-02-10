@@ -7,18 +7,21 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>ScrollerGame</title>
   <script src="../Fudge/FudgeCore.js"></script>
-  <script src="../L14_ScrollerFoundation/SpriteGenerator.js"></script>
+  <script src="L14_ScrollerFoundation/SpriteGenerator.js"></script>
   <script src="Floor.js"></script>
   <script src="Objects.js"></script>
   <script src="movingObjects.js"></script>
   <script src="Girl.js"></script>
   <script src="Enemy.js"></script>
   <script src="Main.js"></script>
+  <script src="start.js"></script>
   <style>
     body {
       background-color: beige;
       display: flex;
       justify-content: center;
+
+      font-family: Arial, sans-serif;
     }
 
     #container {
@@ -30,17 +33,206 @@
     }
 
     canvas {
+      position: absolute;
       width: 90%;
-      height: auto;
-      margin: auto;
+      max-width: 1200px;
+      height: 70%;
+      top: 0;
+    }
+
+    #user-interface {
+      position: absolute;
+      /* display: flex; */
+      /* justify-content: center; */
+      /* flex-direction: column; */
+      background-color: blueviolet;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    #options {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 500px;
+      height: 200px;
+    }
+
+    h1 {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #options button,
+    #new-game button,
+    #game-interface button {
+      background-color: #44c767;
+      border-radius: 28px;
+      border: 1px solid #18ab29;
+      display: inline-block;
+      cursor: pointer;
+      color: #ffffff;
+      font-size: 17px;
+      padding: 16px 31px;
+      text-decoration: none;
+      text-shadow: 0px 1px 0px #2f6627;
+      outline: none;
+    }
+
+    #options button:hover,
+    #new-game button:hover,
+    #game-interface button:hover {
+      background-color: #5cbf2a;
+    }
+
+    #options button:active,
+    #new-game button:active,
+    #game-interface button:active {
+      position: relative;
+      top: 1px;
+    }
+
+    #how-to-play {
+      display: none;
+      position: absolute;
+      background-color: coral;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    #new-game {
+      display: none;
+      position: absolute;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background-color: darkcyan;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+
+    #game-interface {
+      display: none;
+      position: absolute;
+      background-color: darkcyan;
+      height: 30%;
+      bottom: 0;
+      /* left: 0; */
+      width: 90%;
+      max-width: 1200px;
+    }
+
+    #game-interface button {
+      position: absolute;
+      bottom: 15%;
+      right: 5%;
+    }
+
+    #attacks {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    #life {
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200px;
+      border: 2px solid black;
+      background-color: red;
+      border-radius: 10px;
+      text-align: center;
+      padding: 2px;
+    }
+
+    #name {
+      position: absolute;
+      top: 50%;
+      left: 5%;
+      transform: translateY(-50%);
+    }
+
+    #attacks div {
+      display: inline-block;
+      width: 50px;
+      height: 50px;
+      padding: 15px;
+      border: 2px dotted gray;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    #attacks .active {
+      border: 3px solid lightgray;
     }
   </style>
 </head>
 
 <body>
   <canvas style="background-color: aliceblue;"></canvas>
+  <img src="Spritesheet.png">
 
-  <img src="spritesheet2.png">
+  <div id="user-interface">
+    <h1>[Game Name]</h1>
+    <div id="options">
+      <button onclick="newGame()">New Game</button>
+      <button onclick="loadGame()">Load Game</button>
+      <button onclick="howTo()">How to play</button>
+    </div>
+  </div>
+
+  <div id="how-to-play">
+    <div>
+      <h3>MOVEMENT:</h3>A = Left, D = Right, SPACE = Jump
+    </div>
+    <div>
+      <h3>Attack:</h3>left mouse button use seleckted Attack<br>Move mouse to change attack direcktion<br>change
+      seleckted attack with numbers(1,2,3...)
+    </div>
+    <div>
+      <h3>RULES:</h3>if your healt is depleated or an anemy hits you direcktely you loose.
+    </div>
+  </div>
+
+  <div id="new-game">
+    <div style="margin-bottom: 50px;">
+      <h3>Enter your Name:</h3>
+      <p>max. 10 characters</p>
+      <input type="text" id="user-name" name="name" placeholder="name" required maxlength="10" size="10">
+    </div>
+    <button onclick="buildGame()">Start</button>
+  </div>
+
+  <div id="game-interface">
+    <h2 id="name">NAME</h2>
+    <div id="life">100 HP</div>
+    <div id="attacks">
+      <div id="energy" class="active" style="background-color: lightblue;">Energie Ball</div>
+      <div id="water" style="background-color: blue;">Wasser Pfeil</div>
+      <div id="fire" style="background-color: crimson;">Feuer Ball</div>
+    </div>
+    <button onclick="saveGame()">Save and Exit</button>
+  </div>
+
 </body>
 
 </html>

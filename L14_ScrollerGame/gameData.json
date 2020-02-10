@@ -10,7 +10,7 @@
 				
 				{
 					"name": "monky",
-					"spritsheetData": [[50,0,22,39,4,80],[50,0,22,39,4,80],[50,0,22,39,4,80]],
+					"spritsheetData": [[2350,1000,22,39,4,80],[2350,1000,22,39,4,80],[2350,1000,22,39,4,80]],
 					"positions": [[3.2,0.5],[13,1.3],[20.2,1],[33.2,0.6]],
 					"type":"Enemy"
 				}
@@ -18,21 +18,21 @@
 			"nature": [
 				{
 					"name": "LeafTree",
-					"spritsheetData": [138, 0, 350, 500, 1, 200],
+					"spritsheetData": [2438, 1000, 350, 500, 1, 200],
 					"positions": [[3,0.2],[13.5,0.2],[23,0],[33,0.2]],
 					"type":"Object",
 					"use":true
 				},
 				{
 					"name": "PineTree",
-					"spritsheetData": [488, 0, 280, 500, 1, 200],
+					"spritsheetData": [2788, 1000, 280, 500, 1, 200],
 					"positions": [[-1,0],[11,0.2],[24.5,0]],
 					"type":"Object",
 					"use":true
 				},
 				{
 					"name": "SlimTree",
-					"spritsheetData": [768, 0, 100, 400, 1, 220],
+					"spritsheetData": [3068, 1000, 100, 400, 1, 220],
 					"positions": [[2.5,0.2],[20,0.2],[30.5,0.2]],
 					"type":"Object",
 					"use":true

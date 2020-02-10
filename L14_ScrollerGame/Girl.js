@@ -53,7 +53,7 @@ var L14_ScrollerGame;
             sprite.generateByGrid(_txtImage, f.Rectangle.GET(_values[1][0], _values[1][1], _values[1][2], _values[1][3]), _values[1][4], f.Vector2.ZERO(), _values[1][5], f.ORIGIN2D.BOTTOMCENTER);
             Girl.sprites.push(sprite);
             sprite = new L14_ScrollerGame.Sprite(ACTION.W_ARM);
-            sprite.generateByGrid(_txtImage, f.Rectangle.GET(6718, 0, 490, 180), 1, f.Vector2.ZERO(), 1000, f.ORIGIN2D.TOPLEFT);
+            sprite.generateByGrid(_txtImage, f.Rectangle.GET(_values[2][0], _values[2][1], _values[2][2], _values[2][3]), _values[2][4], f.Vector2.ZERO(), _values[2][5], f.ORIGIN2D.TOPLEFT);
             Girl.arm = new L14_ScrollerGame.NodeSprite(sprite.name, sprite);
         }
         checkCollision() {
