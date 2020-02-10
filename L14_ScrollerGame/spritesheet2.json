@@ -1,0 +1,155 @@
+﻿{"frames": {
+
+"girlTest.png":
+{
+	"frame": {"x":0,"y":0,"w":50,"h":100},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":50,"h":100},
+	"sourceSize": {"w":50,"h":100}
+},
+"monkey1.png":
+{
+	"frame": {"x":50,"y":0,"w":22,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":35},
+	"sourceSize": {"w":22,"h":35}
+},
+"monkey2.png":
+{
+	"frame": {"x":72,"y":0,"w":22,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":35},
+	"sourceSize": {"w":22,"h":35}
+},
+"monkey3.png":
+{
+	"frame": {"x":94,"y":0,"w":22,"h":39},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":39},
+	"sourceSize": {"w":22,"h":39}
+},
+"monkey4.png":
+{
+	"frame": {"x":116,"y":0,"w":22,"h":35},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":22,"h":35},
+	"sourceSize": {"w":22,"h":35}
+},
+"tree1.png":
+{
+	"frame": {"x":138,"y":0,"w":350,"h":500},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":350,"h":500},
+	"sourceSize": {"w":350,"h":500}
+},
+"tree2.png":
+{
+	"frame": {"x":488,"y":0,"w":280,"h":500},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":280,"h":500},
+	"sourceSize": {"w":280,"h":500}
+},
+"tree3.png":
+{
+	"frame": {"x":768,"y":0,"w":100,"h":400},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":100,"h":400},
+	"sourceSize": {"w":100,"h":400}
+},
+"walk1.png":
+{
+	"frame": {"x":868,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk2.png":
+{
+	"frame": {"x":1518,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk3.png":
+{
+	"frame": {"x":2168,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk4.png":
+{
+	"frame": {"x":2818,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk5.png":
+{
+	"frame": {"x":3468,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk6.png":
+{
+	"frame": {"x":4118,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk7.png":
+{
+	"frame": {"x":4768,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk8.png":
+{
+	"frame": {"x":5418,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"walk_girlStanding.png":
+{
+	"frame": {"x":6068,"y":0,"w":650,"h":1000},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":650,"h":1000},
+	"sourceSize": {"w":650,"h":1000}
+},
+"wandArm.png":
+{
+	"frame": {"x":6718,"y":0,"w":490,"h":180},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":490,"h":180},
+	"sourceSize": {"w":490,"h":180}
+}},
+"meta": {
+	"app": "Adobe Animate",
+	"version": "20.0.1.19255",
+	"image": "Unbenannt-1.png",
+	"format": "RGBA8888",
+	"size": {"w":8192,"h":1100},
+	"scale": "1"
+}
+}
