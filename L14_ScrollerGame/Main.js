@@ -19,7 +19,7 @@ var L14_ScrollerGame;
     let lookAt = L14_ScrollerGame.f.Vector3.ZERO();
     let rotationSpeed = .2;
     async function loadData() {
-        let response = await fetch("gameData.json");
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json");
         let offer = await response.text();
         data = JSON.parse(offer);
         main();
