@@ -25,7 +25,7 @@ var L14_ScrollerGame;
         console.log(data);
         main();
     }
-    /*function readTextFile(file, callback) {
+    function readTextFile(file, callback) {
       var rawFile = new XMLHttpRequest();
       rawFile.overrideMimeType("application/json");
       rawFile.open("GET", file, true);
@@ -38,10 +38,10 @@ var L14_ScrollerGame;
     }
   
     //usage:
-    readTextFile("gameData.json", function (text) {
+    readTextFile("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json", function (text) {
       var data = JSON.parse(text);
       console.log(data);
-    });*/
+    });
     function main() {
         let img = document.querySelector("img");
         canvas = document.querySelector("canvas");
