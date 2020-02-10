@@ -1,10 +1,10 @@
 "use strict";
-var L14_ScrollerFoundation;
-(function (L14_ScrollerFoundation) {
+var L14_ScrollerGame;
+(function (L14_ScrollerGame) {
     var f = FudgeCore;
     class SpriteFrame {
     }
-    L14_ScrollerFoundation.SpriteFrame = SpriteFrame;
+    L14_ScrollerGame.SpriteFrame = SpriteFrame;
     class Sprite {
         constructor(_name) {
             this.frames = [];
@@ -73,7 +73,7 @@ var L14_ScrollerFoundation;
         }
     }
     Sprite.mesh = new f.MeshSprite();
-    L14_ScrollerFoundation.Sprite = Sprite;
+    L14_ScrollerGame.Sprite = Sprite;
     class NodeSprite extends f.Node {
         constructor(_name, _sprite) {
             super(_name);
@@ -103,6 +103,6 @@ var L14_ScrollerFoundation;
             this.direction = Math.floor(_direction);
         }
     }
-    L14_ScrollerFoundation.NodeSprite = NodeSprite;
-})(L14_ScrollerFoundation || (L14_ScrollerFoundation = {}));
+    L14_ScrollerGame.NodeSprite = NodeSprite;
+})(L14_ScrollerGame || (L14_ScrollerGame = {}));
 //# sourceMappingURL=SpriteGenerator.js.map

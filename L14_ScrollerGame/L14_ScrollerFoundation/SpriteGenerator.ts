@@ -1,4 +1,4 @@
-namespace L14_ScrollerFoundation {
+namespace L14_ScrollerGame {
   import f = FudgeCore;
 
   export class SpriteFrame {

@@ -1,8 +1,6 @@
-/// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
+/// <reference path="L14_ScrollerFoundation/SpriteGenerator.ts"/>
 namespace L14_ScrollerGame {
   export import f = FudgeCore;
-  export import Sprite = L14_ScrollerFoundation.Sprite;
-  export import NodeSprite = L14_ScrollerFoundation.NodeSprite;
 
   export enum OBJECTTYPE {
     OBJECT = "Object",
@@ -23,7 +21,6 @@ namespace L14_ScrollerGame {
   export let direction: string;
   export let checkColision: f.Node;
   let girl: Girl;
-  let name: string;
 
   /*let leafTree: Object;
   let pineTree: Object;
@@ -40,6 +37,24 @@ namespace L14_ScrollerGame {
     data = JSON.parse(offer);
     main();
   }
+
+  /*function readTextFile(file, callback) {
+    var rawFile = new XMLHttpRequest();
+    rawFile.overrideMimeType("application/json");
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function () {
+      if (rawFile.readyState === 4 && rawFile.status == "200") {
+        callback(rawFile.responseText);
+      }
+    }
+    rawFile.send(null);
+  }
+
+  //usage:
+  readTextFile("gameData.json", function (text) {
+    var data = JSON.parse(text);
+    console.log(data);
+  });*/
 
 
   function main(): void {

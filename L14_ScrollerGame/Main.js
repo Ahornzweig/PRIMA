@@ -1,11 +1,9 @@
 "use strict";
-/// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
+/// <reference path="L14_ScrollerFoundation/SpriteGenerator.ts"/>
 var L14_ScrollerGame;
-/// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
+/// <reference path="L14_ScrollerFoundation/SpriteGenerator.ts"/>
 (function (L14_ScrollerGame) {
     L14_ScrollerGame.f = FudgeCore;
-    L14_ScrollerGame.Sprite = L14_ScrollerFoundation.Sprite;
-    L14_ScrollerGame.NodeSprite = L14_ScrollerFoundation.NodeSprite;
     let OBJECTTYPE;
     (function (OBJECTTYPE) {
         OBJECTTYPE["OBJECT"] = "Object";
@@ -13,7 +11,6 @@ var L14_ScrollerGame;
     })(OBJECTTYPE = L14_ScrollerGame.OBJECTTYPE || (L14_ScrollerGame.OBJECTTYPE = {}));
     let keysPressed = {};
     let girl;
-    let name;
     /*let leafTree: Object;
     let pineTree: Object;
     let slimTree: Object;*/
@@ -27,6 +24,23 @@ var L14_ScrollerGame;
         data = JSON.parse(offer);
         main();
     }
+    /*function readTextFile(file, callback) {
+      var rawFile = new XMLHttpRequest();
+      rawFile.overrideMimeType("application/json");
+      rawFile.open("GET", file, true);
+      rawFile.onreadystatechange = function () {
+        if (rawFile.readyState === 4 && rawFile.status == "200") {
+          callback(rawFile.responseText);
+        }
+      }
+      rawFile.send(null);
+    }
+  
+    //usage:
+    readTextFile("gameData.json", function (text) {
+      var data = JSON.parse(text);
+      console.log(data);
+    });*/
     function main() {
         let img = document.querySelector("img");
         canvas = document.querySelector("canvas");

@@ -1,10 +1,11 @@
 namespace L14_ScrollerGame {
     import f = FudgeCore;
+
     export class Object extends f.Node {
-        
+
         private static sprite: Sprite;
         private objects: number[][];
-        
+
 
 
         public constructor(_name: string, _data: number[][]) {

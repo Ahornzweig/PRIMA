@@ -1,5 +1,8 @@
+
 namespace L14_ScrollerGame {
     import f = FudgeCore;
+    
+
     export enum ACTION {
         IDLE = "Idle",
         WALK = "Walk",
