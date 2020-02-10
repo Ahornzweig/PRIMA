@@ -22,6 +22,7 @@ var L14_ScrollerGame;
         let response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json");
         let offer = await response.text();
         data = JSON.parse(offer);
+        console.log(data);
         main();
     }
     /*function readTextFile(file, callback) {
