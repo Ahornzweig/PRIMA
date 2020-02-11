@@ -1,7 +1,6 @@
 
 namespace L14_ScrollerGame {
     import f = FudgeCore;
-    
 
     export enum ACTION {
         IDLE = "Idle",
@@ -46,7 +45,6 @@ namespace L14_ScrollerGame {
                 this.appendChild(nodeSprite);
             }
 
-
             this.show(ACTION.IDLE);
             f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
         }
@@ -66,9 +64,8 @@ namespace L14_ScrollerGame {
             Girl.arm = new NodeSprite(sprite.name, sprite);
         }
 
-
         checkCollision(): void {
-            for (let floor of checkColision.getChildren()) {
+            for (let floor of tiles.getChildren()) {
                 let rect: f.Rectangle = (<Floor>floor).getRectWorld();
                 //console.log(rect.toString());
                 let hit: boolean = rect.isInside(this.cmpTransform.local.translation.toVector2());
@@ -92,6 +89,11 @@ namespace L14_ScrollerGame {
             this.setRotationZ(angle);
         }
 
+        public getRotation(): number {
+            let angle: number = Girl.armNode.cmpTransform.local.rotation.z;
+            return angle;
+        }
+
         private update = (_event: f.Eventƒ): void => {
             this.broadcastEvent(new CustomEvent("showNext"));
 
@@ -99,10 +101,8 @@ namespace L14_ScrollerGame {
             this.speed.y += Girl.gravity.y; //* timeFrame;
             let distance: f.Vector3 = f.Vector3.SCALE(this.speed, timeFrame);
             this.cmpTransform.local.translate(distance);
-            
+
             this.checkCollision();
         }
-
-
     }
 }

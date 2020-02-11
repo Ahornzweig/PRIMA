@@ -17,10 +17,12 @@ namespace L14_ScrollerGame {
         static speedMax: f.Vector2 = new f.Vector2(1.3, 5); // units per second
 
         public speed: f.Vector3 = f.Vector3.ZERO();
+        
 
         public constructor(_name: string) {
             super(_name);
             this.addComponent(new f.ComponentTransform());
+          
 
         }
 

@@ -1,7 +1,9 @@
-/// <reference path="L14_ScrollerFoundation/SpriteGenerator.ts"/>
+
+///// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
 namespace L14_ScrollerGame {
   export import f = FudgeCore;
-
+  //export import Sprite = L14_ScrollerFoundation.Sprite;
+  //export import NodeSprite = L14_ScrollerFoundation.NodeSprite;
   export enum OBJECTTYPE {
     OBJECT = "Object",
     ENEMY = "Enemy"
@@ -10,58 +12,49 @@ namespace L14_ScrollerGame {
   interface KeyPressed {
     [code: string]: boolean;
   }
+  interface AttackType {
+    [type: number]: boolean[];
+  }
   let keysPressed: KeyPressed = {};
+  export let useAttack: AttackType = { 1: [true, true], 2: [false, true], 3: [false, true] };
 
-  //let spriteGirl: Sprite;
-  //let spriteFish: Sprite;
-  //let spriteGround: Sprite;
   export let game: f.Node;
   export let level: f.Node;
+  export let tiles: f.Node;
+  export let enemies: f.Node;
+  export let girl: Girl;
   export let cmpCamera: f.ComponentCamera;
-  export let direction: string;
-  export let checkColision: f.Node;
-  let girl: Girl;
+  export let direction: string = "right";
 
-  /*let leafTree: Object;
-  let pineTree: Object;
-  let slimTree: Object;*/
   let data: Data;
   let canvas: HTMLCanvasElement;
   let lookAt: f.Vector3 = f.Vector3.ZERO();
+  let txtImage: f.TextureImage;
   let rotationSpeed: number = .2;
-
+  let energy: HTMLDivElement;
+  let water: HTMLDivElement;
+  let fire: HTMLDivElement;
+  let energyBall: Attack;
+  let waterArrow: Attack;
 
   async function loadData(): Promise<T> {
-    let response: Response = await fetch("gameData.json");
+    let response: Response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
     let offer: string = await response.text();
-    data = JSON.parse(offer);
-    main();
-  }
-
-  /*function readTextFile(file, callback) {
-    var rawFile = new XMLHttpRequest();
-    rawFile.overrideMimeType("application/json");
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function () {
-      if (rawFile.readyState === 4 && rawFile.status == "200") {
-        callback(rawFile.responseText);
-      }
-    }
-    rawFile.send(null);
-  }
-
-  //usage:
-  readTextFile("gameData.json", function (text) {
-    var data = JSON.parse(text);
+    data = await JSON.parse(offer);
     console.log(data);
-  });*/
+    main(data);
+  }
 
+  function main(_data: Data): void {
 
-  function main(): void {
+    energy = <HTMLDivElement>document.getElementById("energy");
+    water = <HTMLDivElement>document.getElementById("water");
+    fire = <HTMLDivElement>document.getElementById("fire");
+
     let img: HTMLImageElement = document.querySelector("img");
     canvas = document.querySelector("canvas");
     //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
-    let txtImage: f.TextureImage = new f.TextureImage();
+    txtImage = new f.TextureImage();
     txtImage.image = img;
 
     f.RenderManager.initialize(true, false);
@@ -87,9 +80,10 @@ namespace L14_ScrollerGame {
     viewport.draw();
 
     document.addEventListener("keydown", handleKeyboard);
+    document.addEventListener("keydown", handleAttack);
     document.addEventListener("keyup", handleKeyboard);
     document.addEventListener("mousemove", armMovement);
-
+    document.addEventListener("click", attack);
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_GAME, 14);
 
@@ -127,11 +121,58 @@ namespace L14_ScrollerGame {
       girl.act(ACTION.JUMP);
     }
   }
-  /* if (direction == "right") {
-     floors.sort(function (a: number[], b: number[]): number { return a[2] - b[2]; });
-   } else {
-     floors.sort(function (a: number[], b: number[]): number { return b[2] - a[2]; });
-   */
+
+  function handleAttack(_event: KeyboardEvent): void {
+    if (_event.keyCode == 49 || _event.code == f.KEYBOARD_CODE.NUMPAD1) {
+      useAttack[1][0] = true;
+      useAttack[2][0] = false;
+      useAttack[3][0] = false;
+      energy.className = "active";
+      water.className = "";
+      fire.className = "";
+    }
+    if (_event.keyCode == 50 || _event.code == f.KEYBOARD_CODE.NUMPAD2) {
+      useAttack[1][0] = false;
+      useAttack[2][0] = true;
+      useAttack[3][0] = false;
+      energy.className = "";
+      water.className = "active";
+      fire.className = "";
+    }
+    if (_event.keyCode == 51 || _event.code == f.KEYBOARD_CODE.NUMPAD3) {
+      useAttack[1][0] = false;
+      useAttack[2][0] = false;
+      useAttack[3][0] = true;
+      energy.className = "";
+      water.className = "";
+      fire.className = "active";
+    }
+  }
+
+  export function attack(_event: MouseEvent): void {
+    //style="background-color: rgb(124, 190, 212);"
+    let time: number;
+    let style: string;
+    let styleCooldown: string;
+
+    if (useAttack[1][0] && useAttack[1][1]) {
+
+      time = 6;
+      style = "rgba(124, 190, 212, 1)";
+      styleCooldown = "rgba(124, 190, 212, 0.5)";
+      energyBall.use(time, "energy", 1, style, styleCooldown);
+
+    } else if (useAttack[2][0] && useAttack[2][1]) {
+      time = 10;
+      style = "rgba(0, 0, 255, 1)";
+      styleCooldown = "rgba(0, 0, 100, 1)";
+      waterArrow.use(time, "water", 2, style, styleCooldown);
+
+    } else if (useAttack[3][0] && useAttack[3][1]) {
+      console.log("test3");
+    }
+
+  }
 
   function processInput(): void {
     if (keysPressed[f.KEYBOARD_CODE.A]) {
@@ -153,18 +194,30 @@ namespace L14_ScrollerGame {
     let level: f.Node = new f.Node(levelData.name);
     let that;
 
+    enemies = new f.Node("enemies");
+
+    Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 250], [0, 1000, 50, 48, 1, 125]]);
+    energyBall = new Attack("energyBall", [1.5, 0], "boom");
+
+    Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 150]]);
+    waterArrow = new Attack("waterArrow", [1.5, 0], "splash");
+
     for (let key in levelData.enemys) {
       that = levelData.enemys[key];
       Enemy.generateSprites(_txtImage, that.name, that.spritsheetData);
-      let enemy: Enemy = new Enemy(that.name, that.positions);
+      let enemy: Enemy = new Enemy(that.name, that.positions, that.positions[0][1], that.index);
       enemy.cmpTransform.local.translateX(that.positions[0][0]);
       enemy.cmpTransform.local.translateY(that.positions[0][1]);
-      level.appendChild(enemy);
+      enemy.cmpTransform.local.scaleX(that.scale[0]);
+      enemy.cmpTransform.local.scaleY(that.scale[1]);
+      enemies.appendChild(enemy);
     }
+
+    level.appendChild(enemies);
 
     for (let key in levelData.nature) {
       that = levelData.nature[key];
-      //console.log(that);
+
       Object.generateSprites(_txtImage, that.name, that.spritsheetData);
       let object: Object = new Object(that.name, that.positions);
       object.cmpTransform.local.translateX(that.positions[0][0]);
@@ -172,8 +225,7 @@ namespace L14_ScrollerGame {
       level.appendChild(object);
     }
 
-    checkColision = new f.Node("checkKolision");
-
+    tiles = new f.Node("checkKolision");
 
     for (let i: number = 0; i < 3; i++) {
       let that: number[] = levelData.ground.transform[i];
@@ -182,10 +234,10 @@ namespace L14_ScrollerGame {
       floor.cmpTransform.local.scaleY(that[1]);
       floor.cmpTransform.local.translateX(that[2]);
       floor.cmpTransform.local.translateY(that[3]);
-      checkColision.appendChild(floor);
+      tiles.appendChild(floor);
     }
 
-    level.appendChild(checkColision);
+    level.appendChild(tiles);
     return level;
   }
 

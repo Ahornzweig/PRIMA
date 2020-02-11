@@ -13,8 +13,9 @@ var L14_ScrollerGame;
          LEFT, RIGHT
      }*/
     class Enemy extends L14_ScrollerGame.MovingObject {
-        constructor(_name, _data) {
+        constructor(_name, _data, _pivot, _index) {
             super(_name);
+            this.mesh = new f.MeshSprite();
             this.update = (_event) => {
                 this.broadcastEvent(new CustomEvent("showNext"));
                 let timeFrame = f.Loop.timeFrameGame / 1000;
@@ -22,42 +23,22 @@ var L14_ScrollerGame;
                 this.cmpTransform.local.translate(distance);
                 let camPositionX = L14_ScrollerGame.cmpCamera.pivot.translation.x;
                 let test = this.cmpTransform.local.translation.x;
-                if (L14_ScrollerGame.direction == "right" && test <= camPositionX - 6) {
-                    let transform = this.cmpTransform.local;
-                    let index;
-                    for (let i = 0; i < this.enemies.length; i++) {
-                        if (this.enemies[i][0] === Math.round((transform.translation.x + Number.EPSILON) * 100) / 100) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    let newTranslation = f.Vector3.ZERO();
-                    newTranslation.x = this.enemies[(index + 1)][0];
-                    newTranslation.y = this.enemies[(index + 1)][1];
-                    this.cmpTransform.local.translation = newTranslation;
+                if (L14_ScrollerGame.direction == "right" && test <= camPositionX - 4) {
+                    this.moveEnemy();
                 }
-                else if (L14_ScrollerGame.direction == "left" && test >= camPositionX + 6) {
-                    let transform = this.cmpTransform.local;
-                    let index;
-                    for (let i = 0; i < this.enemies.length; i++) {
-                        if (this.enemies[i][0] === Math.round((transform.translation.x + Number.EPSILON) * 100) / 100) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    let newTranslation = f.Vector3.ZERO();
-                    newTranslation.x = this.enemies[(index - 1)][0];
-                    newTranslation.y = this.enemies[(index - 1)][1];
-                    this.cmpTransform.local.translation = newTranslation;
+                else if (L14_ScrollerGame.direction == "left" && test >= camPositionX + 4) {
+                    this.moveEnemy();
                 }
             };
-            let cmpMesh = new f.ComponentMesh(Enemy.mesh);
-            cmpMesh.pivot = Enemy.pivot;
+            this.pivot = f.Matrix4x4.TRANSLATION(f.Vector3.Y(_pivot));
+            let cmpMesh = new f.ComponentMesh(this.mesh);
+            cmpMesh.pivot = this.pivot;
             this.addComponent(cmpMesh);
             this.enemies = _data;
+            this.index = _index;
             for (let sprite of Enemy.sprites) {
                 let nodeSprite = new L14_ScrollerGame.NodeSprite(sprite.name, sprite);
-                //nodeSprite.activate(false);
+                nodeSprite.activate(false);
                 nodeSprite.addEventListener("showNext", (_event) => { _event.currentTarget.showFrameNext(); }, true);
                 this.appendChild(nodeSprite);
             }
@@ -80,7 +61,7 @@ var L14_ScrollerGame;
             let rect = f.Rectangle.GET(0, 0, 100, 100);
             let topleft = new f.Vector3(-0.5, 0.5, 0);
             let bottomright = new f.Vector3(0.5, -0.5, 0);
-            let mtxResult = f.Matrix4x4.MULTIPLICATION(this.mtxWorld, Enemy.pivot);
+            let mtxResult = f.Matrix4x4.MULTIPLICATION(this.mtxWorld, this.pivot);
             topleft.transform(mtxResult, true);
             bottomright.transform(mtxResult, true);
             let size = new f.Vector2(bottomright.x - topleft.x, bottomright.y - topleft.y);
@@ -88,10 +69,73 @@ var L14_ScrollerGame;
             rect.size = size;
             return rect;
         }
+        defeated() {
+            let tempIndex = this.index;
+            if (L14_ScrollerGame.direction == "right" && this.enemies.length > 1) {
+                if (this.index < this.enemies.length) {
+                    this.index++;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                    this.enemies.splice(tempIndex, 1);
+                    this.index--;
+                }
+                else {
+                    this.index--;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                    this.enemies.splice(tempIndex, 1);
+                }
+            }
+            else if (L14_ScrollerGame.direction == "left" && this.enemies.length > 1) {
+                if (this.index > 0) {
+                    this.index--;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                    this.enemies.splice(tempIndex, 1);
+                }
+                else {
+                    this.index++;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                    this.enemies.splice(tempIndex, 1);
+                    this.index--;
+                }
+            }
+            else if (this.enemies.length == 1) {
+                this.enemies.splice(tempIndex, 1);
+                alert("all " + this.name + "s slayn");
+            }
+        }
+        moveEnemy() {
+            if (L14_ScrollerGame.direction == "right") {
+                if (this.index < this.enemies.length) {
+                    this.index++;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                }
+            }
+            else if (L14_ScrollerGame.direction == "left") {
+                if (this.index > 0) {
+                    this.index--;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.enemies[this.index][0];
+                    newTranslation.y = this.enemies[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                }
+            }
+        }
     }
     Enemy.gravity = f.Vector2.Y(-3);
-    Enemy.mesh = new f.MeshSprite();
-    Enemy.pivot = f.Matrix4x4.TRANSLATION(f.Vector3.Y(-0.5));
     L14_ScrollerGame.Enemy = Enemy;
 })(L14_ScrollerGame || (L14_ScrollerGame = {}));
 //# sourceMappingURL=Enemy.js.map

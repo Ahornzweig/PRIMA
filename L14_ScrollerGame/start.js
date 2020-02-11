@@ -5,6 +5,12 @@ function howTo() {
     userInterface.style.display = "none";
     howTo.style.display = "flex";
 }
+function startScreen() {
+    let howTo = document.getElementById("how-to-play");
+    let userInterface = document.getElementById("user-interface");
+    userInterface.style.display = "block";
+    howTo.style.display = "none";
+}
 function loadGame() {
     let userInterface = document.getElementById("user-interface");
     let gameInterface = document.getElementById("game-interface");

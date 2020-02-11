@@ -57,7 +57,7 @@ var L14_ScrollerGame;
             Girl.arm = new L14_ScrollerGame.NodeSprite(sprite.name, sprite);
         }
         checkCollision() {
-            for (let floor of L14_ScrollerGame.checkColision.getChildren()) {
+            for (let floor of L14_ScrollerGame.tiles.getChildren()) {
                 let rect = floor.getRectWorld();
                 //console.log(rect.toString());
                 let hit = rect.isInside(this.cmpTransform.local.translation.toVector2());
@@ -77,6 +77,10 @@ var L14_ScrollerGame;
         rotateZ(_delta) {
             let angle = Girl.armNode.cmpTransform.local.rotation.z + _delta;
             this.setRotationZ(angle);
+        }
+        getRotation() {
+            let angle = Girl.armNode.cmpTransform.local.rotation.z;
+            return angle;
         }
     }
     Girl.gravity = f.Vector2.Y(-.3);

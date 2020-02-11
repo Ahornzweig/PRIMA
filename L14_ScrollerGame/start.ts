@@ -1,9 +1,19 @@
+
 function howTo(): void {
     let howTo: HTMLDivElement = <HTMLDivElement>document.getElementById("how-to-play");
     let userInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("user-interface");
 
     userInterface.style.display = "none";
     howTo.style.display = "flex";
+
+}
+
+function startScreen(): void {
+    let howTo: HTMLDivElement = <HTMLDivElement>document.getElementById("how-to-play");
+    let userInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("user-interface");
+
+    userInterface.style.display = "block";
+    howTo.style.display = "none";
 
 }
 
@@ -30,8 +40,8 @@ function buildGame(): void {
     let input: HTMLInputElement = <HTMLInputElement>document.getElementById("user-name");
     let name: HTMLHeadingElement = <HTMLHeadingElement>document.getElementById("name");
     //console.log(input.value);
-    name.innerHTML = input.value;
 
+    name.innerHTML = input.value;
     gameInterface.style.display = "block";
     newGame.style.display = "none";
 

@@ -11,6 +11,7 @@
   <script src="Floor.js"></script>
   <script src="Objects.js"></script>
   <script src="movingObjects.js"></script>
+  <script src="Attack.js"></script>
   <script src="Girl.js"></script>
   <script src="Enemy.js"></script>
   <script src="Main.js"></script>
@@ -70,10 +71,11 @@
       left: 50%;
       transform: translate(-50%, -50%);
     }
+    h3 {
+      margin-bottom: 5px;
+    }
 
-    #options button,
-    #new-game button,
-    #game-interface button {
+    button {
       background-color: #44c767;
       border-radius: 28px;
       border: 1px solid #18ab29;
@@ -87,15 +89,11 @@
       outline: none;
     }
 
-    #options button:hover,
-    #new-game button:hover,
-    #game-interface button:hover {
+    button:hover {
       background-color: #5cbf2a;
     }
 
-    #options button:active,
-    #new-game button:active,
-    #game-interface button:active {
+    button:activee {
       position: relative;
       top: 1px;
     }
@@ -110,6 +108,7 @@
       left: 0;
       flex-direction: column;
       justify-content: center;
+      align-items: center;
       text-align: center;
     }
 
@@ -189,13 +188,14 @@
 
 <body>
   <canvas style="background-color: aliceblue;"></canvas>
-  <img src="https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/spritesheet.png">
+  <img src="Spritesheet.png">
+  <!--https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/spritesheet.png-->
 
   <div id="user-interface">
     <h1>[Game Name]</h1>
     <div id="options">
       <button onclick="newGame()">New Game</button>
-      <button onclick="loadGame()">Load Game</button>
+      <button onclick="loadGame()" disabled>Load Game</button>
       <button onclick="howTo()">How to play</button>
     </div>
   </div>
@@ -211,6 +211,8 @@
     <div>
       <h3>RULES:</h3>if your healt is depleated or an anemy hits you direcktely you loose.
     </div>
+    <br>
+    <button onclick="startScreen()">back</button>
   </div>
 
   <div id="new-game">
@@ -226,13 +228,21 @@
     <h2 id="name">NAME</h2>
     <div id="life">100 HP</div>
     <div id="attacks">
-      <div id="energy" class="active" style="background-color: lightblue;">Energie Ball</div>
-      <div id="water" style="background-color: blue;">Wasser Pfeil</div>
+      <div id="energy" class="active" style="background-color: rgba(124, 190, 212, 1);">Energie Ball</div>
+      <div id="water" style="background-color: rgb(0, 0, 105);">Wasser Pfeil</div>
       <div id="fire" style="background-color: crimson;">Feuer Ball</div>
     </div>
     <button onclick="saveGame()">Save and Exit</button>
   </div>
-
+  <audio id="boom">
+    <source  src="src/boom.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="splash">
+    <source  src="src/splash.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="static">
+    <source  src="src/static.mpeg" type="audio/mpeg">
+  </audio>
 </body>
 
 </html>
