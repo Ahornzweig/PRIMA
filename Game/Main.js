@@ -1,8 +1,6 @@
 "use strict";
-///<reference types = "../Fudge/FudgeCore"/>
 ///// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
 var Game;
-///<reference types = "../Fudge/FudgeCore"/>
 ///// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
 (function (Game) {
     Game.f = FudgeCore;
@@ -28,7 +26,7 @@ var Game;
     let waterArrow;
     let fireBall;
     async function loadData() {
-        let response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
         let offer = await response.text();
         data = await JSON.parse(offer);
         console.log(data);

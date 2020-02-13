@@ -1,4 +1,4 @@
-///<reference types = "../Fudge/FudgeCore"/>
+
 ///// <reference path="../L14_ScrollerFoundation/SpriteGenerator.ts"/>
 namespace Game {
   export import f = FudgeCore;
@@ -39,7 +39,7 @@ namespace Game {
   let fireBall: Attack;
 
   async function loadData(): Promise<T> {
-    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
     let offer: string = await response.text();
     data = await JSON.parse(offer);
     console.log(data);
