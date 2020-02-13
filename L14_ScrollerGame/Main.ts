@@ -36,9 +36,10 @@ namespace L14_ScrollerGame {
   let fire: HTMLDivElement;
   let energyBall: Attack;
   let waterArrow: Attack;
+  let fireBall: Attack;
 
   async function loadData(): Promise<T> {
-    let response: Response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
     let offer: string = await response.text();
     data = await JSON.parse(offer);
     console.log(data);
@@ -51,7 +52,7 @@ namespace L14_ScrollerGame {
     water = <HTMLDivElement>document.getElementById("water");
     fire = <HTMLDivElement>document.getElementById("fire");
 
-    let img: HTMLImageElement = document.querySelector("img");
+    let img: HTMLImageElement = document.querySelectorAll("img")[1];
     canvas = document.querySelector("canvas");
     //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
     txtImage = new f.TextureImage();
@@ -170,6 +171,10 @@ namespace L14_ScrollerGame {
 
     } else if (useAttack[3][0] && useAttack[3][1]) {
       console.log("test3");
+      time = 10;
+      style = "rgba(255, 0, 0, 1)";
+      styleCooldown = "rgba(100, 0, 0, 1)";
+      fireBall.use(time, "fire", 2, style, styleCooldown);
     }
 
   }
@@ -194,35 +199,69 @@ namespace L14_ScrollerGame {
     let level: f.Node = new f.Node(levelData.name);
     let that;
 
+    let txtImageBackground: f.TextureImage;
+    let bgImg: HTMLImageElement = <HTMLImageElement>document.getElementById(levelData.background.id);
+    txtImageBackground = new f.TextureImage();
+    txtImageBackground.image = bgImg;
+
+    that = levelData.background;
+    Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
+
+    for (let i: number = 0; i < that.positions.length; i++) {
+      let object: Object = new Object(that.name, that.positions[i], that.index, that.Z);
+      object.cmpTransform.local.translateX(that.positions[i][0][0]);
+      object.cmpTransform.local.translateY(that.positions[i][0][1]);
+      object.cmpTransform.local.translateZ(that.Z);
+      object.cmpTransform.local.scaleX(15);
+      object.cmpTransform.local.scaleY(15);
+      if (i == 1) {
+        object.cmpTransform.local.rotateY(-180);
+      }
+      level.appendChild(object);
+    }
+
     enemies = new f.Node("enemies");
 
-    Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 250], [0, 1000, 50, 48, 1, 125]]);
+    Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
     energyBall = new Attack("energyBall", [1.5, 0], "boom");
 
-    Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 150]]);
+    Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 200]]);
     waterArrow = new Attack("waterArrow", [1.5, 0], "splash");
+
+    Attack.generateSprites(_txtImage, "fireBall", [[5200, 0, 240, 130, 2, 340], [5200, 0, 240, 130, 1, 300]]);
+    fireBall = new Attack("fireBall", [1.5, 0], "boom");
 
     for (let key in levelData.enemys) {
       that = levelData.enemys[key];
       Enemy.generateSprites(_txtImage, that.name, that.spritsheetData);
-      let enemy: Enemy = new Enemy(that.name, that.positions, that.positions[0][1], that.index);
-      enemy.cmpTransform.local.translateX(that.positions[0][0]);
-      enemy.cmpTransform.local.translateY(that.positions[0][1]);
-      enemy.cmpTransform.local.scaleX(that.scale[0]);
-      enemy.cmpTransform.local.scaleY(that.scale[1]);
-      enemies.appendChild(enemy);
-    }
 
+      for (let i: number = 0; i < that.positions.length; i++) {
+
+        let enemy: Enemy = new Enemy(that.name, that.positions[i], that.positions[i][0][1], that.index, that.speed);
+        enemy.cmpTransform.local.translateX(that.positions[i][0][0]);
+        enemy.cmpTransform.local.translateY(that.positions[i][0][1]);
+        enemy.cmpTransform.local.scaleX(that.scale[0]);
+        enemy.cmpTransform.local.scaleY(that.scale[1]);
+        if (that.name == "fish") {
+          enemy.cmpTransform.local.rotateY(-180);
+          enemy.act(ACTION.WALK);
+        }
+        enemies.appendChild(enemy);
+      }
+    }
+    //console.log(enemies);
     level.appendChild(enemies);
 
     for (let key in levelData.nature) {
       that = levelData.nature[key];
-
       Object.generateSprites(_txtImage, that.name, that.spritsheetData);
-      let object: Object = new Object(that.name, that.positions);
-      object.cmpTransform.local.translateX(that.positions[0][0]);
-      object.cmpTransform.local.translateY(that.positions[0][1]);
-      level.appendChild(object);
+
+      for (let i: number = 0; i < that.positions.length; i++) {
+        let object: Object = new Object(that.name, that.positions[i], that.index);
+        object.cmpTransform.local.translateX(that.positions[i][0][0]);
+        object.cmpTransform.local.translateY(that.positions[i][0][1]);
+        level.appendChild(object);
+      }
     }
 
     tiles = new f.Node("checkKolision");
@@ -246,5 +285,10 @@ namespace L14_ScrollerGame {
     girl.rotateZ(currentY);
   }
 
-  window.addEventListener("load", loadData);
+  function start(): void {
+    let button: HTMLButtonElement = <HTMLButtonElement>document.getElementById("start");
+    button.addEventListener("click", loadData);
+  }
+
+  window.addEventListener("load", start);
 }

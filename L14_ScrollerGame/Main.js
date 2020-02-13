@@ -24,8 +24,9 @@ var L14_ScrollerGame;
     let fire;
     let energyBall;
     let waterArrow;
+    let fireBall;
     async function loadData() {
-        let response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json"); //https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/gameData.json
         let offer = await response.text();
         data = await JSON.parse(offer);
         console.log(data);
@@ -35,7 +36,7 @@ var L14_ScrollerGame;
         energy = document.getElementById("energy");
         water = document.getElementById("water");
         fire = document.getElementById("fire");
-        let img = document.querySelector("img");
+        let img = document.querySelectorAll("img")[1];
         canvas = document.querySelector("canvas");
         //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
         txtImage = new L14_ScrollerGame.f.TextureImage();
@@ -139,6 +140,10 @@ var L14_ScrollerGame;
         }
         else if (L14_ScrollerGame.useAttack[3][0] && L14_ScrollerGame.useAttack[3][1]) {
             console.log("test3");
+            time = 10;
+            style = "rgba(255, 0, 0, 1)";
+            styleCooldown = "rgba(100, 0, 0, 1)";
+            fireBall.use(time, "fire", 2, style, styleCooldown);
         }
     }
     L14_ScrollerGame.attack = attack;
@@ -157,29 +162,58 @@ var L14_ScrollerGame;
         let levelData = data.Game.Level1;
         let level = new L14_ScrollerGame.f.Node(levelData.name);
         let that;
+        let txtImageBackground;
+        let bgImg = document.getElementById(levelData.background.id);
+        txtImageBackground = new L14_ScrollerGame.f.TextureImage();
+        txtImageBackground.image = bgImg;
+        that = levelData.background;
+        L14_ScrollerGame.Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
+        for (let i = 0; i < that.positions.length; i++) {
+            let object = new L14_ScrollerGame.Object(that.name, that.positions[i], that.index, that.Z);
+            object.cmpTransform.local.translateX(that.positions[i][0][0]);
+            object.cmpTransform.local.translateY(that.positions[i][0][1]);
+            object.cmpTransform.local.translateZ(that.Z);
+            object.cmpTransform.local.scaleX(15);
+            object.cmpTransform.local.scaleY(15);
+            if (i == 1) {
+                object.cmpTransform.local.rotateY(-180);
+            }
+            level.appendChild(object);
+        }
         L14_ScrollerGame.enemies = new L14_ScrollerGame.f.Node("enemies");
-        L14_ScrollerGame.Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 250], [0, 1000, 50, 48, 1, 125]]);
+        L14_ScrollerGame.Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
         energyBall = new L14_ScrollerGame.Attack("energyBall", [1.5, 0], "boom");
-        L14_ScrollerGame.Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 150]]);
+        L14_ScrollerGame.Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 200]]);
         waterArrow = new L14_ScrollerGame.Attack("waterArrow", [1.5, 0], "splash");
+        L14_ScrollerGame.Attack.generateSprites(_txtImage, "fireBall", [[5200, 0, 240, 130, 2, 340], [5200, 0, 240, 130, 1, 300]]);
+        fireBall = new L14_ScrollerGame.Attack("fireBall", [1.5, 0], "boom");
         for (let key in levelData.enemys) {
             that = levelData.enemys[key];
             L14_ScrollerGame.Enemy.generateSprites(_txtImage, that.name, that.spritsheetData);
-            let enemy = new L14_ScrollerGame.Enemy(that.name, that.positions, that.positions[0][1], that.index);
-            enemy.cmpTransform.local.translateX(that.positions[0][0]);
-            enemy.cmpTransform.local.translateY(that.positions[0][1]);
-            enemy.cmpTransform.local.scaleX(that.scale[0]);
-            enemy.cmpTransform.local.scaleY(that.scale[1]);
-            L14_ScrollerGame.enemies.appendChild(enemy);
+            for (let i = 0; i < that.positions.length; i++) {
+                let enemy = new L14_ScrollerGame.Enemy(that.name, that.positions[i], that.positions[i][0][1], that.index, that.speed);
+                enemy.cmpTransform.local.translateX(that.positions[i][0][0]);
+                enemy.cmpTransform.local.translateY(that.positions[i][0][1]);
+                enemy.cmpTransform.local.scaleX(that.scale[0]);
+                enemy.cmpTransform.local.scaleY(that.scale[1]);
+                if (that.name == "fish") {
+                    enemy.cmpTransform.local.rotateY(-180);
+                    enemy.act(L14_ScrollerGame.ACTION.WALK);
+                }
+                L14_ScrollerGame.enemies.appendChild(enemy);
+            }
         }
+        //console.log(enemies);
         level.appendChild(L14_ScrollerGame.enemies);
         for (let key in levelData.nature) {
             that = levelData.nature[key];
             L14_ScrollerGame.Object.generateSprites(_txtImage, that.name, that.spritsheetData);
-            let object = new L14_ScrollerGame.Object(that.name, that.positions);
-            object.cmpTransform.local.translateX(that.positions[0][0]);
-            object.cmpTransform.local.translateY(that.positions[0][1]);
-            level.appendChild(object);
+            for (let i = 0; i < that.positions.length; i++) {
+                let object = new L14_ScrollerGame.Object(that.name, that.positions[i], that.index);
+                object.cmpTransform.local.translateX(that.positions[i][0][0]);
+                object.cmpTransform.local.translateY(that.positions[i][0][1]);
+                level.appendChild(object);
+            }
         }
         L14_ScrollerGame.tiles = new L14_ScrollerGame.f.Node("checkKolision");
         for (let i = 0; i < 3; i++) {
@@ -198,6 +232,10 @@ var L14_ScrollerGame;
         let currentY = -_event.movementY * rotationSpeed;
         L14_ScrollerGame.girl.rotateZ(currentY);
     }
-    window.addEventListener("load", loadData);
+    function start() {
+        let button = document.getElementById("start");
+        button.addEventListener("click", loadData);
+    }
+    window.addEventListener("load", start);
 })(L14_ScrollerGame || (L14_ScrollerGame = {}));
 //# sourceMappingURL=Main.js.map

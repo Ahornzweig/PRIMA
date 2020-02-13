@@ -8,12 +8,12 @@
   <title>ScrollerGame</title>
   <script src="../Fudge/FudgeCore.js"></script>
   <script src="L14_ScrollerFoundation/SpriteGenerator.js"></script>
-  <script src="Floor.js"></script>
-  <script src="Objects.js"></script>
-  <script src="movingObjects.js"></script>
-  <script src="Attack.js"></script>
-  <script src="Girl.js"></script>
-  <script src="Enemy.js"></script>
+  <script src="Classes/Floor.js"></script>
+  <script src="Classes/Objects.js"></script>
+  <script src="Classes/movingObjects.js"></script>
+  <script src="Classes/Attack.js"></script>
+  <script src="Classes/Girl.js"></script>
+  <script src="Classes/Enemy.js"></script>
   <script src="Main.js"></script>
   <script src="start.js"></script>
   <style>
@@ -188,8 +188,10 @@
 
 <body>
   <canvas style="background-color: aliceblue;"></canvas>
-  <img src="Spritesheet.png">
-  <!--https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/spritesheet.png-->
+  <img id="mountain" src="https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/mountain.png">
+  <img src="-https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/Spritesheet.png">
+  <!--https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/Spritesheet.png-->
+  <!--https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/mountain.png-->
 
   <div id="user-interface">
     <h1>[Game Name]</h1>
@@ -221,7 +223,7 @@
       <p>max. 10 characters</p>
       <input type="text" id="user-name" name="name" placeholder="name" required maxlength="10" size="10">
     </div>
-    <button onclick="buildGame()">Start</button>
+    <button id="start" onclick="buildGame()">Start</button>
   </div>
 
   <div id="game-interface">
@@ -235,13 +237,13 @@
     <button onclick="saveGame()">Save and Exit</button>
   </div>
   <audio id="boom">
-    <source  src="src/boom.mpeg" type="audio/mpeg">
+    <source  src="https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/boom.mpeg" type="audio/mpeg">
   </audio>
   <audio id="splash">
-    <source  src="src/splash.mpeg" type="audio/mpeg">
+    <source  src="https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/splash.mpeg" type="audio/mpeg">
   </audio>
   <audio id="static">
-    <source  src="src/static.mpeg" type="audio/mpeg">
+    <source  src="https://ahornzweig.github.io/PRIMA/L14_ScrollerGame/src/static.mpeg" type="audio/mpeg">
   </audio>
 </body>
 
