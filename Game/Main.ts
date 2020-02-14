@@ -21,13 +21,16 @@ namespace Game {
   export let level: f.Node;
   export let tiles: f.Node;
   export let enemies: f.Node;
+  export let natures: f.Node;
+  export let backgrounds: f.Node;
   export let girl: Girl;
   export let cmpCamera: f.ComponentCamera;
   export let direction: string = "right";
 
   export let data: Data;
+  export let levelIndex: number;
   let canvas: HTMLCanvasElement;
-  let levelIndex: number;
+  let nextLevelIndex: number;
   let lookAt: f.Vector3 = f.Vector3.ZERO();
   let txtImage: f.TextureImage;
   let rotationSpeed: number = .2;
@@ -40,15 +43,15 @@ namespace Game {
   export let HealtBar: HTMLDivElement;
   export let HP: number = 100;
 
-  async function loadData(): Promise<T> {
-    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
+  async function loadData(): Promise<void> {
+    let response: Response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
     let offer: string = await response.text();
     data = await JSON.parse(offer);
     console.log(data);
     main(data);
   }
 
-  function main(_data: Data): void {
+  export function main(_data: Data): void {
 
     energy = <HTMLDivElement>document.getElementById("energy");
     water = <HTMLDivElement>document.getElementById("water");
@@ -63,11 +66,13 @@ namespace Game {
 
     f.RenderManager.initialize(true, false);
 
+    let levelData = data.Game.Levels[levelIndex];
+
     cmpCamera = new f.ComponentCamera();
-    cmpCamera.pivot.translateZ(6);
-    cmpCamera.pivot.translateY(1.5);
-    cmpCamera.pivot.translateX(2);
-    lookAt.set(2, 1.5, 0);
+    cmpCamera.pivot.translateZ(levelData.camPos[2]);
+    cmpCamera.pivot.translateY(levelData.camPos[1]);
+    cmpCamera.pivot.translateX(levelData.camPos[0]);
+    lookAt.set(levelData.camPos[0], levelData.camPos[1], 0);
     cmpCamera.pivot.lookAt(lookAt);
     cmpCamera.backgroundColor = f.Color.CSS("aliceblue");
 
@@ -77,6 +82,8 @@ namespace Game {
     Girl.generateSprites(txtImage, [[0, 0, 650, 1000, 7, 1000], [3168, 1000, 650, 1000, 1, 1000], [3818, 1000, 650, 1000, 1, 1000]]);
 
     girl = new Girl("GirlHero");
+    girl.cmpTransform.local.translateX(levelData.girlPos[0]);
+    girl.cmpTransform.local.translateY(levelData.girlPos[0]);
     level.appendChild(girl);
 
     let viewport: f.Viewport = new f.Viewport();
@@ -208,31 +215,10 @@ namespace Game {
   function buildLevel(_txtImage: f.TextureImage): f.Node {
 
     let levelData = data.Game.Levels[levelIndex];
+    nextLevelIndex = levelData.next;
+
     let level: f.Node = new f.Node(levelData.name);
     let that;
-
-    let txtImageBackground: f.TextureImage;
-    let bgImg: HTMLImageElement = <HTMLImageElement>document.getElementById(levelData.background.id);
-    txtImageBackground = new f.TextureImage();
-    txtImageBackground.image = bgImg;
-
-    that = levelData.background;
-    Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
-
-    for (let i: number = 0; i < that.positions.length; i++) {
-      let object: Object = new Object(that.name, that.positions[i], that.index, that.Z);
-      object.cmpTransform.local.translateX(that.positions[i][0][0]);
-      object.cmpTransform.local.translateY(that.positions[i][0][1]);
-      object.cmpTransform.local.translateZ(that.Z);
-      object.cmpTransform.local.scaleX(that.scale[0]);
-      object.cmpTransform.local.scaleY(that.scale[1]);
-      if (i == 1) {
-        object.cmpTransform.local.rotateY(-180);
-      }
-      level.appendChild(object);
-    }
-
-    enemies = new f.Node("enemies");
 
     Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 200]]);
     waterArrow = new Attack("waterArrow", [1.5, 0], "splash");
@@ -243,6 +229,32 @@ namespace Game {
     Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
     energyBall = new Attack("energyBall", [1.4, 0], "boom");
 
+    let txtImageBackground: f.TextureImage;
+    let bgImg: HTMLImageElement = <HTMLImageElement>document.getElementById(levelData.background.id);
+    txtImageBackground = new f.TextureImage();
+    txtImageBackground.image = bgImg;
+
+    backgrounds = new f.Node("background");
+
+    that = levelData.background;
+    Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
+
+    for (let i: number = 0; i < that.positions.length; i++) {
+      let object: Object = new Object(that.name, that.positions[i], that.index[i], that.Z);
+      object.cmpTransform.local.translateX(that.positions[i][that.index[i]][0]);
+      object.cmpTransform.local.translateY(that.positions[i][that.index[i]][1]);
+      object.cmpTransform.local.translateZ(that.Z);
+      object.cmpTransform.local.scaleX(that.scale[0]);
+      object.cmpTransform.local.scaleY(that.scale[1]);
+      if (i == 1) {
+        object.cmpTransform.local.rotateY(-180);
+      }
+      backgrounds.appendChild(object);
+    }
+    level.appendChild(backgrounds);
+
+    enemies = new f.Node("enemies");
+
     EnemyAttack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
 
     for (let key in levelData.enemys) {
@@ -251,9 +263,9 @@ namespace Game {
 
       for (let i: number = 0; i < that.positions.length; i++) {
 
-        let enemy: Enemy = new Enemy(that.name, that.positions[i], that.scale[0], that.index, that.speed); //that.positions[i][0][1]
-        enemy.cmpTransform.local.translateX(that.positions[i][0][0]);
-        enemy.cmpTransform.local.translateY(that.positions[i][0][1]);
+        let enemy: Enemy = new Enemy(that.name, that.positions[i], that.scale[0], that.index[i], that.speed); //that.positions[i][0][1]
+        enemy.cmpTransform.local.translateX(that.positions[i][that.index[i]][0]);
+        enemy.cmpTransform.local.translateY(that.positions[i][that.index[i]][1]);
         enemy.cmpTransform.local.scaleX(that.scale[0]);
         enemy.cmpTransform.local.scaleY(that.scale[1]);
         if (that.name == "fish") {
@@ -266,23 +278,26 @@ namespace Game {
     //console.log(enemies);
     level.appendChild(enemies);
 
+    natures = new f.Node("Nature");
+
     for (let key in levelData.nature) {
       that = levelData.nature[key];
       Object.generateSprites(_txtImage, that.name, that.spritsheetData);
 
       for (let i: number = 0; i < that.positions.length; i++) {
-        let object: Object = new Object(that.name, that.positions[i], that.index);
-        object.cmpTransform.local.translateX(that.positions[i][0][0]);
-        object.cmpTransform.local.translateY(that.positions[i][0][1]);
-        level.appendChild(object);
+        let object: Object = new Object(that.name, that.positions[i], that.index[i]);
+        object.cmpTransform.local.translateX(that.positions[i][that.index[i]][0]);
+        object.cmpTransform.local.translateY(that.positions[i][that.index[i]][1]);
+        natures.appendChild(object);
       }
     }
+    level.appendChild(natures);
 
     tiles = new f.Node("checkKolision");
 
     for (let i: number = 0; i < 3; i++) {
-      let that: number[] = levelData.ground.transform[i];
-      let floor: Floor = new Floor(levelData.ground.transform);
+      let that: number[] = levelData.ground.transform[levelData.ground.index[i]];
+      let floor: Floor = new Floor(levelData.ground.transform, levelData.ground.index[i]);
       floor.cmpTransform.local.scaleX(that[0]);
       floor.cmpTransform.local.scaleY(that[1]);
       floor.cmpTransform.local.translateX(that[2]);
@@ -299,11 +314,34 @@ namespace Game {
     girl.rotateZ(currentY);
   }
 
+  export function loadHud(): void {
+
+    let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
+    saveScreen.style.display = "none";
+
+    let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
+
+    gameInterface.style.display = "block";
+  }
+
+  function loadGame(): void {
+    levelIndex = 0;
+    let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
+    saveScreen.style.display = "block";
+    let loadButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("Load");
+    loadButton.addEventListener("click", loadHud);
+
+  }
+
   function start(): void {
     levelIndex = 0;
-    let button: HTMLButtonElement = <HTMLButtonElement>document.getElementById("start");
-    button.addEventListener("click", loadData);
+    let startButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("start");
+    startButton.addEventListener("click", loadData);
+
+    let loadButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("load-game");
+    loadButton.addEventListener("click", loadGame);
   }
+
 
   window.addEventListener("load", start);
 }

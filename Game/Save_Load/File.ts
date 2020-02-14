@@ -1,4 +1,4 @@
-namespace FileHandling {
+namespace Game {
     window.addEventListener("load", init);
     let loadFunctions: { [key: string]: Function } = {
         "FileReader": loadFilesWithFileReader,
@@ -53,14 +53,15 @@ namespace FileHandling {
         if (fileList.length == 0)
             return;
 
-        let load: Function = loadFunctions[getLoader()];
+        let load: Function = loadFunctions["Response"];//getLoader() für entvernte auswahl
         load(fileList);
     }
 
-    function getLoader(): string {
+    /*function getLoader(): string {
         let formData: FormData = new FormData(document.forms[0]);
+        console.log( formData.get("Loader").toString());
         return formData.get("Loader").toString();
-    }
+    }*/
 
     function loadFilesWithFileReader(_fileList: FileList): void {
         console.group("Load with FileReader");
@@ -78,13 +79,22 @@ namespace FileHandling {
     }
 
     async function loadFilesWithResponse(_fileList: FileList): Promise<void> {
-        console.group("Load with Response");
+        //console.group("Load with Response");
         for (let file of _fileList) {
-            logFile(file);
-            const data: string = await new Response(file).text();
-            logContent(data);
+            //logFile(file);
+            const offer: string = await new Response(file).text();
+            data = await JSON.parse(offer);
+            main(data);
+            
+            let name: HTMLHeadingElement = <HTMLHeadingElement>document.getElementById("name");
+            name.innerHTML = data.Game.Levels[levelIndex].userName;
+            HP = data.Game.Levels[levelIndex].HP;
+            HealtBar.innerHTML = HP + " HP";
+            HealtBar.style.width = HP * 2 + "px";
+            console.log(data);
+            //logContent(data);
         }
-        console.groupEnd();
+        //console.groupEnd();
     }
 
 

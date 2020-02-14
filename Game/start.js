@@ -13,8 +13,6 @@ function startScreen() {
 }
 function loadGame() {
     let userInterface = document.getElementById("user-interface");
-    let gameInterface = document.getElementById("game-interface");
-    gameInterface.style.display = "block";
     userInterface.style.display = "none";
 }
 function newGame() {

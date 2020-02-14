@@ -1,6 +1,6 @@
 "use strict";
-var FileHandling;
-(function (FileHandling) {
+var Game;
+(function (Game) {
     window.addEventListener("load", init);
     let loadFunctions = {
         "FileReader": loadFilesWithFileReader,
@@ -46,13 +46,14 @@ var FileHandling;
         let fileList = _event.target.files;
         if (fileList.length == 0)
             return;
-        let load = loadFunctions[getLoader()];
+        let load = loadFunctions["Response"]; //getLoader() für entvernte auswahl
         load(fileList);
     }
-    function getLoader() {
-        let formData = new FormData(document.forms[0]);
+    /*function getLoader(): string {
+        let formData: FormData = new FormData(document.forms[0]);
+        console.log( formData.get("Loader").toString());
         return formData.get("Loader").toString();
-    }
+    }*/
     function loadFilesWithFileReader(_fileList) {
         console.group("Load with FileReader");
         for (let file of _fileList) {
@@ -67,13 +68,21 @@ var FileHandling;
         logContent(_event.target.result.toString());
     }
     async function loadFilesWithResponse(_fileList) {
-        console.group("Load with Response");
+        //console.group("Load with Response");
         for (let file of _fileList) {
-            logFile(file);
-            const data = await new Response(file).text();
-            logContent(data);
+            //logFile(file);
+            const offer = await new Response(file).text();
+            Game.data = await JSON.parse(offer);
+            Game.main(Game.data);
+            let name = document.getElementById("name");
+            name.innerHTML = Game.data.Game.Levels[Game.levelIndex].userName;
+            Game.HP = Game.data.Game.Levels[Game.levelIndex].HP;
+            Game.HealtBar.innerHTML = Game.HP + " HP";
+            Game.HealtBar.style.width = Game.HP * 2 + "px";
+            console.log(Game.data);
+            //logContent(data);
         }
-        console.groupEnd();
+        //console.groupEnd();
     }
     async function loadFilesWithFetch(_fileList) {
         console.group("Load with Fetch");
@@ -104,5 +113,5 @@ var FileHandling;
         content.value = _data;
         console.log(_data);
     }
-})(FileHandling || (FileHandling = {}));
+})(Game || (Game = {}));
 //# sourceMappingURL=File.js.map

@@ -19,11 +19,7 @@ function startScreen(): void {
 
 function loadGame(): void {
     let userInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("user-interface");
-    let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
-
-    gameInterface.style.display = "block";
     userInterface.style.display = "none";
-
 }
 
 function newGame(): void {

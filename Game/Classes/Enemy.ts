@@ -134,7 +134,7 @@ namespace Game {
                 this.enemies.splice(tempIndex, 1);
                 enemies.removeChild(this);
             }
-
+            console.log(this.enemies);
         }
 
         private moveEnemy(): void {

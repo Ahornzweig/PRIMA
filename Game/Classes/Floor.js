@@ -3,46 +3,62 @@ var Game;
 (function (Game) {
     var f = FudgeCore;
     class Floor extends f.Node {
-        constructor(_data) {
+        constructor(_data, _index) {
             super("Floor");
             this.update = (_event) => {
                 let camPositionX = Game.cmpCamera.pivot.translation.x;
                 let test = this.cmpTransform.local.translation.x;
                 if (Game.direction == "right" && test <= camPositionX - 6) {
-                    let transform = this.cmpTransform.local;
-                    let index;
-                    for (let i = 0; i < Floor.floors.length; i++) {
-                        if (Floor.floors[i][2] === transform.translation.x) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    let newTranslation = f.Vector3.ZERO();
-                    newTranslation.x = Floor.floors[(index + 3)][2];
-                    newTranslation.y = Floor.floors[(index + 3)][3];
-                    this.cmpTransform.local.translation = newTranslation;
+                    this.moveFloor();
                 }
                 else if (Game.direction == "left" && test >= camPositionX + 6) {
-                    let transform = this.cmpTransform.local;
-                    let index;
-                    for (let i = 0; i < Floor.floors.length; i++) {
-                        if (Floor.floors[i][2] === transform.translation.x) {
-                            index = i;
-                            break;
-                        }
-                    }
-                    let newTranslation = f.Vector3.ZERO();
-                    newTranslation.x = Floor.floors[(index - 3)][2];
-                    newTranslation.y = Floor.floors[(index - 3)][3];
-                    this.cmpTransform.local.translation = newTranslation;
+                    this.moveFloor();
                 }
+                /*if (direction == "right" && test <= camPositionX - 6) {
+          
+                  let transform: f.Matrix4x4 = this.cmpTransform.local;
+                  let index: number;
+          
+                  for (let i: number = 0; i < Floor.floors.length; i++) {
+                    if (Floor.floors[i][2] === transform.translation.x) {
+                      index = i;
+                      break;
+                    }
+                  }
+          
+                  let newTranslation: f.Vector3 = f.Vector3.ZERO();
+                  newTranslation.x = Floor.floors[(index + 3)][2];
+                  newTranslation.y = Floor.floors[(index + 3)][3];
+          
+                  this.cmpTransform.local.translation = newTranslation;
+          
+                } else if (direction == "left" && test >= camPositionX + 6) {
+          
+                  let transform: f.Matrix4x4 = this.cmpTransform.local;
+                  let index: number;
+          
+                  for (let i: number = 0; i < Floor.floors.length; i++) {
+                    if (Floor.floors[i][2] === transform.translation.x) {
+                      index = i;
+                      break;
+                    }
+                  }
+          
+                  let newTranslation: f.Vector3 = f.Vector3.ZERO();
+                  newTranslation.x = Floor.floors[(index - 3)][2];
+                  newTranslation.y = Floor.floors[(index - 3)][3];
+          
+                  this.cmpTransform.local.translation = newTranslation;
+          
+                }*/
             };
             this.addComponent(new f.ComponentTransform());
             this.addComponent(new f.ComponentMaterial(Floor.material));
             let cmpMesh = new f.ComponentMesh(Floor.mesh);
             cmpMesh.pivot = Floor.pivot;
             this.addComponent(cmpMesh);
-            Floor.floors = _data;
+            this.index = _index;
+            this.floors = _data;
             f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update);
         }
         getRectWorld() {
@@ -56,6 +72,26 @@ var Game;
             rect.position = topleft.toVector2();
             rect.size = size;
             return rect;
+        }
+        moveFloor() {
+            if (Game.direction == "right") {
+                if (this.index < (this.floors.length - 4)) {
+                    this.index += 3;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.floors[this.index][2];
+                    newTranslation.y = this.floors[this.index][3];
+                    this.cmpTransform.local.translation = newTranslation;
+                }
+            }
+            else if (Game.direction == "left") {
+                if ((this.index - 3) > 0) {
+                    this.index -= 3;
+                    let newTranslation = f.Vector3.ZERO();
+                    newTranslation.x = this.floors[this.index][0];
+                    newTranslation.y = this.floors[this.index][1];
+                    this.cmpTransform.local.translation = newTranslation;
+                }
+            }
         }
     }
     Floor.mesh = new f.MeshSprite();

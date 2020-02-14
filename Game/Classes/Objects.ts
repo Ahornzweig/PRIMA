@@ -4,8 +4,8 @@ namespace Game {
     export class Object extends f.Node {
 
         private static sprite: Sprite;
+        public index: number;
         private objects: number[][];
-        private index: number;
         private Z: number;
 
         public constructor(_name: string, _data: number[][], _index: number, _Z: number = 0) {

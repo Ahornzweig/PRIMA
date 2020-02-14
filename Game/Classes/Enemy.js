@@ -114,6 +114,7 @@ var Game;
                 this.enemies.splice(tempIndex, 1);
                 Game.enemies.removeChild(this);
             }
+            console.log(this.enemies);
         }
         moveEnemy() {
             if (Game.direction == "right") {
