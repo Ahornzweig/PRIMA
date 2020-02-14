@@ -21,6 +21,8 @@ namespace Game {
         private static arm: NodeSprite;
         public speed: f.Vector3 = f.Vector3.ZERO();
         private maxRotation: number = 50;
+        private mesh: f.MeshSprite = new f.MeshSprite();
+        private pivot: f.Matrix4x4;
 
         public constructor(_name: string) {
             super(_name);
@@ -31,6 +33,11 @@ namespace Game {
             Girl.armNode.cmpTransform.local.translateX(0.15);
             Girl.armNode.cmpTransform.local.translateY(0.42);
             this.appendChild(Girl.armNode);
+
+            this.pivot = f.Matrix4x4.TRANSLATION(f.Vector3.Y(0.5));
+            let cmpMesh: f.ComponentMesh = new f.ComponentMesh(this.mesh);
+            cmpMesh.pivot = this.pivot;
+            this.addComponent(cmpMesh);
 
             for (let sprite of Girl.sprites) {
 
@@ -84,7 +91,7 @@ namespace Game {
             Girl.armNode.cmpTransform.local.rotation = f.Vector3.Z(_angle);
         }
 
-        rotateZ(_delta: number): void {
+        public rotateZ(_delta: number): void {
             let angle: number = Girl.armNode.cmpTransform.local.rotation.z + _delta;
             this.setRotationZ(angle);
         }
@@ -92,6 +99,22 @@ namespace Game {
         public getRotation(): number {
             let angle: number = Girl.armNode.cmpTransform.local.rotation.z;
             return angle;
+        }
+
+        public getRectWorld(): f.Rectangle {
+            let rect: f.Rectangle = f.Rectangle.GET(0, 0, 100, 100);
+            let topleft: f.Vector3 = new f.Vector3(-0.5, 0.5, 0);
+            let bottomright: f.Vector3 = new f.Vector3(0.5, -0.5, 0);
+
+            let mtxResult: f.Matrix4x4 = f.Matrix4x4.MULTIPLICATION(this.mtxWorld, this.pivot);
+            topleft.transform(mtxResult, true);
+            bottomright.transform(mtxResult, true);
+
+            let size: f.Vector2 = new f.Vector2(bottomright.x - topleft.x, bottomright.y - topleft.y);
+            rect.position = topleft.toVector2();
+            rect.size = size;
+
+            return rect;
         }
 
         private update = (_event: f.Eventƒ): void => {

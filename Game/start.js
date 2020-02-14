@@ -28,13 +28,14 @@ function buildGame() {
     let gameInterface = document.getElementById("game-interface");
     let input = document.getElementById("user-name");
     let name = document.getElementById("name");
-    //console.log(input.value);
     name.innerHTML = input.value;
     gameInterface.style.display = "block";
     newGame.style.display = "none";
 }
-function saveGame() {
-    let newGame = document.getElementById("new-game");
+/*function saveGame(): void {
+    let newGame: HTMLDivElement = <HTMLDivElement>document.getElementById("new-game");
+
     newGame.style.display = "none";
-}
+
+}*/
 //# sourceMappingURL=start.js.map

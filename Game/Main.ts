@@ -1,12 +1,11 @@
 ///<reference types="../Game/FUDGE/FudgeCore.js"/>
 namespace Game {
+
   export import f = FudgeCore;
-  //import Sprite = L14_ScrollerFoundation.Sprite;
-  //export import NodeSprite = L14_ScrollerFoundation.NodeSprite;
-  export enum OBJECTTYPE {
-    OBJECT = "Object",
-    ENEMY = "Enemy"
-  }
+  /* export enum OBJECTTYPE {
+     OBJECT = "Object",
+     ENEMY = "Enemy"
+   }*/
 
   interface KeyPressed {
     [code: string]: boolean;
@@ -14,6 +13,7 @@ namespace Game {
   interface AttackType {
     [type: number]: boolean[];
   }
+
   let keysPressed: KeyPressed = {};
   export let useAttack: AttackType = { 1: [true, true], 2: [false, true], 3: [false, true] };
 
@@ -25,8 +25,9 @@ namespace Game {
   export let cmpCamera: f.ComponentCamera;
   export let direction: string = "right";
 
-  let data: Data;
+  export let data: Data;
   let canvas: HTMLCanvasElement;
+  let levelIndex: number;
   let lookAt: f.Vector3 = f.Vector3.ZERO();
   let txtImage: f.TextureImage;
   let rotationSpeed: number = .2;
@@ -36,6 +37,8 @@ namespace Game {
   let energyBall: Attack;
   let waterArrow: Attack;
   let fireBall: Attack;
+  export let HealtBar: HTMLDivElement;
+  export let HP: number = 100;
 
   async function loadData(): Promise<T> {
     let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
@@ -50,8 +53,9 @@ namespace Game {
     energy = <HTMLDivElement>document.getElementById("energy");
     water = <HTMLDivElement>document.getElementById("water");
     fire = <HTMLDivElement>document.getElementById("fire");
+    HealtBar = <HTMLDivElement>document.getElementById("life");
 
-    let img: HTMLImageElement = document.querySelectorAll("img")[1];
+    let img: HTMLImageElement = document.querySelector("img");
     canvas = document.querySelector("canvas");
     //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
     txtImage = new f.TextureImage();
@@ -84,9 +88,9 @@ namespace Game {
     document.addEventListener("keyup", handleKeyboard);
     document.addEventListener("mousemove", armMovement);
     document.addEventListener("click", attack);
+
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_GAME, 14);
-
 
     function update(_event: f.Eventƒ): void {
       processInput();
@@ -149,14 +153,24 @@ namespace Game {
     }
   }
 
+  let firstAttck: boolean = true;
   export function attack(_event: MouseEvent): void {
     //style="background-color: rgb(124, 190, 212);"
     let time: number;
     let style: string;
     let styleCooldown: string;
 
-    if (useAttack[1][0] && useAttack[1][1]) {
+    if (firstAttck) {
+      for (let enemy of enemies.getChildren()) {
+        setTimeout(function (): void {
+          (<Enemy>enemy).attack.use(5);
+        }, 2000);
+      }
+      firstAttck = false;
+    }
 
+    if (useAttack[1][0] && useAttack[1][1]) {
+      console.log("test");
       time = 6;
       style = "rgba(124, 190, 212, 1)";
       styleCooldown = "rgba(124, 190, 212, 0.5)";
@@ -169,7 +183,6 @@ namespace Game {
       waterArrow.use(time, "water", 2, style, styleCooldown);
 
     } else if (useAttack[3][0] && useAttack[3][1]) {
-      console.log("test3");
       time = 10;
       style = "rgba(255, 0, 0, 1)";
       styleCooldown = "rgba(100, 0, 0, 1)";
@@ -194,7 +207,7 @@ namespace Game {
 
   function buildLevel(_txtImage: f.TextureImage): f.Node {
 
-    let levelData = data.Game.Level1;
+    let levelData = data.Game.Levels[levelIndex];
     let level: f.Node = new f.Node(levelData.name);
     let that;
 
@@ -211,8 +224,8 @@ namespace Game {
       object.cmpTransform.local.translateX(that.positions[i][0][0]);
       object.cmpTransform.local.translateY(that.positions[i][0][1]);
       object.cmpTransform.local.translateZ(that.Z);
-      object.cmpTransform.local.scaleX(15);
-      object.cmpTransform.local.scaleY(15);
+      object.cmpTransform.local.scaleX(that.scale[0]);
+      object.cmpTransform.local.scaleY(that.scale[1]);
       if (i == 1) {
         object.cmpTransform.local.rotateY(-180);
       }
@@ -221,14 +234,16 @@ namespace Game {
 
     enemies = new f.Node("enemies");
 
-    Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
-    energyBall = new Attack("energyBall", [1.5, 0], "boom");
-
     Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 200]]);
     waterArrow = new Attack("waterArrow", [1.5, 0], "splash");
 
     Attack.generateSprites(_txtImage, "fireBall", [[5200, 0, 240, 130, 2, 340], [5200, 0, 240, 130, 1, 300]]);
     fireBall = new Attack("fireBall", [1.5, 0], "boom");
+
+    Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
+    energyBall = new Attack("energyBall", [1.4, 0], "boom");
+
+    EnemyAttack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
 
     for (let key in levelData.enemys) {
       that = levelData.enemys[key];
@@ -236,13 +251,13 @@ namespace Game {
 
       for (let i: number = 0; i < that.positions.length; i++) {
 
-        let enemy: Enemy = new Enemy(that.name, that.positions[i], that.positions[i][0][1], that.index, that.speed);
+        let enemy: Enemy = new Enemy(that.name, that.positions[i], that.scale[0], that.index, that.speed); //that.positions[i][0][1]
         enemy.cmpTransform.local.translateX(that.positions[i][0][0]);
         enemy.cmpTransform.local.translateY(that.positions[i][0][1]);
         enemy.cmpTransform.local.scaleX(that.scale[0]);
         enemy.cmpTransform.local.scaleY(that.scale[1]);
         if (that.name == "fish") {
-          enemy.cmpTransform.local.rotateY(-180);
+          enemy.cmpTransform.local.rotateY(180);
           enemy.act(ACTION.WALK);
         }
         enemies.appendChild(enemy);
@@ -285,6 +300,7 @@ namespace Game {
   }
 
   function start(): void {
+    levelIndex = 0;
     let button: HTMLButtonElement = <HTMLButtonElement>document.getElementById("start");
     button.addEventListener("click", loadData);
   }

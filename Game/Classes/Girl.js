@@ -21,6 +21,7 @@ var Game;
             super(_name);
             this.speed = f.Vector3.ZERO();
             this.maxRotation = 50;
+            this.mesh = new f.MeshSprite();
             this.update = (_event) => {
                 this.broadcastEvent(new CustomEvent("showNext"));
                 let timeFrame = f.Loop.timeFrameGame / 1000;
@@ -35,6 +36,10 @@ var Game;
             Girl.armNode.cmpTransform.local.translateX(0.15);
             Girl.armNode.cmpTransform.local.translateY(0.42);
             this.appendChild(Girl.armNode);
+            this.pivot = f.Matrix4x4.TRANSLATION(f.Vector3.Y(0.5));
+            let cmpMesh = new f.ComponentMesh(this.mesh);
+            cmpMesh.pivot = this.pivot;
+            this.addComponent(cmpMesh);
             for (let sprite of Girl.sprites) {
                 let nodeSprite = new Game.NodeSprite(sprite.name, sprite);
                 nodeSprite.activate(false);
@@ -81,6 +86,18 @@ var Game;
         getRotation() {
             let angle = Girl.armNode.cmpTransform.local.rotation.z;
             return angle;
+        }
+        getRectWorld() {
+            let rect = f.Rectangle.GET(0, 0, 100, 100);
+            let topleft = new f.Vector3(-0.5, 0.5, 0);
+            let bottomright = new f.Vector3(0.5, -0.5, 0);
+            let mtxResult = f.Matrix4x4.MULTIPLICATION(this.mtxWorld, this.pivot);
+            topleft.transform(mtxResult, true);
+            bottomright.transform(mtxResult, true);
+            let size = new f.Vector2(bottomright.x - topleft.x, bottomright.y - topleft.y);
+            rect.position = topleft.toVector2();
+            rect.size = size;
+            return rect;
         }
     }
     Girl.gravity = f.Vector2.Y(-.3);

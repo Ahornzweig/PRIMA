@@ -4,18 +4,11 @@ var Game;
 ///<reference types="../Game/FUDGE/FudgeCore.js"/>
 (function (Game) {
     Game.f = FudgeCore;
-    //import Sprite = L14_ScrollerFoundation.Sprite;
-    //export import NodeSprite = L14_ScrollerFoundation.NodeSprite;
-    let OBJECTTYPE;
-    (function (OBJECTTYPE) {
-        OBJECTTYPE["OBJECT"] = "Object";
-        OBJECTTYPE["ENEMY"] = "Enemy";
-    })(OBJECTTYPE = Game.OBJECTTYPE || (Game.OBJECTTYPE = {}));
     let keysPressed = {};
     Game.useAttack = { 1: [true, true], 2: [false, true], 3: [false, true] };
     Game.direction = "right";
-    let data;
     let canvas;
+    let levelIndex;
     let lookAt = Game.f.Vector3.ZERO();
     let txtImage;
     let rotationSpeed = .2;
@@ -25,18 +18,20 @@ var Game;
     let energyBall;
     let waterArrow;
     let fireBall;
+    Game.HP = 100;
     async function loadData() {
         let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
         let offer = await response.text();
-        data = await JSON.parse(offer);
-        console.log(data);
-        main(data);
+        Game.data = await JSON.parse(offer);
+        console.log(Game.data);
+        main(Game.data);
     }
     function main(_data) {
         energy = document.getElementById("energy");
         water = document.getElementById("water");
         fire = document.getElementById("fire");
-        let img = document.querySelectorAll("img")[1];
+        Game.HealtBar = document.getElementById("life");
+        let img = document.querySelector("img");
         canvas = document.querySelector("canvas");
         //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
         txtImage = new Game.f.TextureImage();
@@ -121,12 +116,22 @@ var Game;
             fire.className = "active";
         }
     }
+    let firstAttck = true;
     function attack(_event) {
         //style="background-color: rgb(124, 190, 212);"
         let time;
         let style;
         let styleCooldown;
+        if (firstAttck) {
+            for (let enemy of Game.enemies.getChildren()) {
+                setTimeout(function () {
+                    enemy.attack.use(5);
+                }, 2000);
+            }
+            firstAttck = false;
+        }
         if (Game.useAttack[1][0] && Game.useAttack[1][1]) {
+            console.log("test");
             time = 6;
             style = "rgba(124, 190, 212, 1)";
             styleCooldown = "rgba(124, 190, 212, 0.5)";
@@ -139,7 +144,6 @@ var Game;
             waterArrow.use(time, "water", 2, style, styleCooldown);
         }
         else if (Game.useAttack[3][0] && Game.useAttack[3][1]) {
-            console.log("test3");
             time = 10;
             style = "rgba(255, 0, 0, 1)";
             styleCooldown = "rgba(100, 0, 0, 1)";
@@ -159,7 +163,7 @@ var Game;
         Game.girl.act(Game.ACTION.IDLE);
     }
     function buildLevel(_txtImage) {
-        let levelData = data.Game.Level1;
+        let levelData = Game.data.Game.Levels[levelIndex];
         let level = new Game.f.Node(levelData.name);
         let that;
         let txtImageBackground;
@@ -173,31 +177,32 @@ var Game;
             object.cmpTransform.local.translateX(that.positions[i][0][0]);
             object.cmpTransform.local.translateY(that.positions[i][0][1]);
             object.cmpTransform.local.translateZ(that.Z);
-            object.cmpTransform.local.scaleX(15);
-            object.cmpTransform.local.scaleY(15);
+            object.cmpTransform.local.scaleX(that.scale[0]);
+            object.cmpTransform.local.scaleY(that.scale[1]);
             if (i == 1) {
                 object.cmpTransform.local.rotateY(-180);
             }
             level.appendChild(object);
         }
         Game.enemies = new Game.f.Node("enemies");
-        Game.Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
-        energyBall = new Game.Attack("energyBall", [1.5, 0], "boom");
         Game.Attack.generateSprites(_txtImage, "waterArrow", [[50, 1000, 150, 50, 2, 250], [50, 1000, 150, 50, 1, 200]]);
         waterArrow = new Game.Attack("waterArrow", [1.5, 0], "splash");
         Game.Attack.generateSprites(_txtImage, "fireBall", [[5200, 0, 240, 130, 2, 340], [5200, 0, 240, 130, 1, 300]]);
         fireBall = new Game.Attack("fireBall", [1.5, 0], "boom");
+        Game.Attack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
+        energyBall = new Game.Attack("energyBall", [1.4, 0], "boom");
+        Game.EnemyAttack.generateSprites(txtImage, "energyBall", [[0, 1000, 50, 48, 1, 150], [0, 1000, 50, 48, 1, 100]]);
         for (let key in levelData.enemys) {
             that = levelData.enemys[key];
             Game.Enemy.generateSprites(_txtImage, that.name, that.spritsheetData);
             for (let i = 0; i < that.positions.length; i++) {
-                let enemy = new Game.Enemy(that.name, that.positions[i], that.positions[i][0][1], that.index, that.speed);
+                let enemy = new Game.Enemy(that.name, that.positions[i], that.scale[0], that.index, that.speed); //that.positions[i][0][1]
                 enemy.cmpTransform.local.translateX(that.positions[i][0][0]);
                 enemy.cmpTransform.local.translateY(that.positions[i][0][1]);
                 enemy.cmpTransform.local.scaleX(that.scale[0]);
                 enemy.cmpTransform.local.scaleY(that.scale[1]);
                 if (that.name == "fish") {
-                    enemy.cmpTransform.local.rotateY(-180);
+                    enemy.cmpTransform.local.rotateY(180);
                     enemy.act(Game.ACTION.WALK);
                 }
                 Game.enemies.appendChild(enemy);
@@ -233,6 +238,7 @@ var Game;
         Game.girl.rotateZ(currentY);
     }
     function start() {
+        levelIndex = 0;
         let button = document.getElementById("start");
         button.addEventListener("click", loadData);
     }

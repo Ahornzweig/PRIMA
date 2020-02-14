@@ -14,11 +14,12 @@ namespace Game {
     export class Enemy extends MovingObject {
         static gravity: f.Vector2 = f.Vector2.Y(-3);
 
-        private enemies: number[][];
-        private index: number;
+        public attack: EnemyAttack;
+        public enemies: number[][];
+        public index: number;
         private mesh: f.MeshSprite = new f.MeshSprite();
         private pivot: f.Matrix4x4;
-        
+
         public constructor(_name: string, _data: number[][], _pivot: number, _index: number, _speed: number[]) {
             super(_name, _speed);
             this.pivot = f.Matrix4x4.TRANSLATION(f.Vector3.Y(_pivot));
@@ -27,6 +28,8 @@ namespace Game {
             this.addComponent(cmpMesh);
             this.enemies = _data;
             this.index = _index;
+
+            this.attack = new EnemyAttack("energyBall", [1.4, 0], "boom", this);
 
             for (let sprite of Enemy.sprites) {
 
@@ -42,6 +45,8 @@ namespace Game {
             }
             this.show(ACTION.IDLE);
             f.Loop.addEventListener(f.EVENT.LOOP_FRAME, this.update);
+
+
         }
 
         public static generateSprites(_txtImage: f.TextureImage, _name: string, _values: number[][]): void {

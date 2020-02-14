@@ -39,7 +39,6 @@ function buildGame(): void {
     let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
     let input: HTMLInputElement = <HTMLInputElement>document.getElementById("user-name");
     let name: HTMLHeadingElement = <HTMLHeadingElement>document.getElementById("name");
-    //console.log(input.value);
 
     name.innerHTML = input.value;
     gameInterface.style.display = "block";
@@ -47,9 +46,9 @@ function buildGame(): void {
 
 }
 
-function saveGame(): void {
+/*function saveGame(): void {
     let newGame: HTMLDivElement = <HTMLDivElement>document.getElementById("new-game");
 
     newGame.style.display = "none";
 
-}
+}*/

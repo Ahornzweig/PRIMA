@@ -36,6 +36,7 @@ var Game;
             this.addComponent(cmpMesh);
             this.enemies = _data;
             this.index = _index;
+            this.attack = new Game.EnemyAttack("energyBall", [1.4, 0], "boom", this);
             for (let sprite of Enemy.sprites) {
                 let nodeSprite = new Game.NodeSprite(sprite.name, sprite);
                 nodeSprite.activate(false);
