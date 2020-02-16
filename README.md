@@ -11,7 +11,7 @@ link zum Designdokument: https://ahornzweig.github.io/PRIMA/Archiv/Designdokumen
 
 link zum Archiv: https://github.com/Ahornzweig/PRIMA/tree/master/Archiv
 
-download Archiv: [Download](https://github.com/Ahornzweig/PRIMA/tree/master/Archiv.zip)
+download Archiv: [Download](https://github.com/Ahornzweig/PRIMA/raw/tree/master/Archiv.zip)
 
 download lokale version (lokaler server erforderlich):[Download](https://github.com/Ahornzweig/PRIMA/tree/master/localGame.zip)
 
