@@ -137,7 +137,7 @@ namespace Game {
                 newTranslation.y = -3;
                 this.cmpTransform.local.translation = newTranslation;
 
-                this.enemies.splice(tempIndex, 1);
+                //this.enemies.splice(tempIndex, 1);
                 //enemies.removeChild(this);
             }
         }
