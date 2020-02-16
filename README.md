@@ -4,8 +4,11 @@
 © Prof. Dipl.-Ing. Jirka R. Dell'Oro-Friedl, HFU
 
 link zum Spiel: https://ahornzweig.github.io/PRIMA/Archiv/Game/index.html
+
 link zum Quellcode: https://github.com/Ahornzweig/PRIMA/tree/master/Archiv/Game
+
 link zum Designdokument: https://ahornzweig.github.io/PRIMA/Archiv/Designdokument.pdf
+
 link zum Archiv: https://github.com/Ahornzweig/PRIMA/tree/master/Archiv
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
