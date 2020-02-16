@@ -46,7 +46,7 @@ namespace Game {
   let jumpAudio: HTMLAudioElement;
 
   async function loadData(): Promise<void> {
-    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Archiv/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
     let offer: string = await response.text();
     data = await JSON.parse(offer);
 
@@ -340,7 +340,7 @@ namespace Game {
   }
 
   async function loadNextData(): Promise<void> {
-    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Archiv/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
     let offer: string = await response.text();
     data = await JSON.parse(offer);
 

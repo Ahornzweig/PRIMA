@@ -19,7 +19,7 @@ var Game;
     Game.enemiesDefeated = 0;
     let jumpAudio;
     async function loadData() {
-        let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/Archiv/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
         let offer = await response.text();
         Game.data = await JSON.parse(offer);
         main(Game.data);
@@ -258,7 +258,7 @@ var Game;
         Game.f.Loop.start();
     }
     async function loadNextData() {
-        let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/Archiv/Game/gameData.json"); //muss lokal zu gameData.json geändert werden
         let offer = await response.text();
         Game.data = await JSON.parse(offer);
         rebuildLevel(Game.data);
