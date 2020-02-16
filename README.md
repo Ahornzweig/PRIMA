@@ -5,9 +5,9 @@
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|    | Titel                 |
-|    | Name                  |
-|    | Matrikelnummer        |
+|    | Titel                 | [Quest of the GirlHero]
+|    | Name                  | Sarah Lönnqvist
+|    | Matrikelnummer        | 259116
 |  1 | Nutzerinteraktion     | Der Nutzer kann mit der Applikation interagieren. Mit welchen Mitteln und welchen Aktionen werden welche Reaktionen ausgelöst?                                                                                                                                                 |
 |  2 | Objektinteraktion     | Mit Hilfe von Kollisionsprüfung interagieren Objekte miteinander. Wann passiert dabei wie was?                                                                                                                                                                                 |
 |  3 | Objektanzahl variabel | Eine variable Anzahl von Objekten wird zur Laufzeit generiert. Welche sind dies und wann und wie geschieht die Erzeugung?                                                                                                                                                      |
