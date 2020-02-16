@@ -1,0 +1,206 @@
+body {
+    background-color: beige;
+    display: flex;
+    justify-content: center;
+
+    font-family: Arial, sans-serif;
+  }
+
+  #container {
+    width: 1000px;
+  }
+
+  img {
+    display: none;
+  }
+
+  canvas {
+    position: absolute;
+    width: 90%;
+    max-width: 1200px;
+    height: 70%;
+    top: 0;
+  }
+
+  #user-interface {
+    position: absolute;
+    background-color: blueviolet;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  .options {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 200px;
+  }
+
+  h1 {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  h3 {
+    margin-bottom: 5px;
+  }
+
+  button {
+    background-color: #44c767;
+    border-radius: 28px;
+    border: 1px solid #18ab29;
+    display: inline-block;
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 17px;
+    padding: 16px 31px;
+    text-decoration: none;
+    text-shadow: 0px 1px 0px #2f6627;
+    outline: none;
+  }
+
+  button:hover {
+    background-color: #5cbf2a;
+  }
+
+  button:activee {
+    position: relative;
+    top: 1px;
+  }
+
+  #how-to-play {
+    display: none;
+    position: absolute;
+    background-color: coral;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+
+  #new-game {
+    display: none;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: darkcyan;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  #game-interface {
+    display: none;
+    position: absolute;
+    background-color: darkcyan;
+    height: 30%;
+    bottom: 0;
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  #game-interface button {
+    position: absolute;
+    bottom: 15%;
+    right: 5%;
+  }
+
+  #attacks {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  #life {
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    border: 2px solid black;
+    background-color: red;
+    border-radius: 10px;
+    text-align: center;
+    padding: 2px;
+  }
+
+  #name {
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: translateY(-50%);
+  }
+
+  #attacks div {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    padding: 15px;
+    border: 2px dotted gray;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  #attacks .active {
+    border: 3px solid lightgray;
+  }
+
+  #save-screen,
+  #load-screen {
+    display: none;
+    position: absolute;
+    background-color: coral;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  #gameover-screen {
+    display: none;
+    position: absolute;
+    background-color: crimson;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  #end-screen {
+    display: none;
+    position: absolute;
+    background-color:#44c767;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  #good,#bad{
+    display: none;
+  }
+
+  textarea {
+    display: none;
+  }
+
+  fieldset{
+    border-style: none;
+  }
