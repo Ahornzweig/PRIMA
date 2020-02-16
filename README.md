@@ -32,12 +32,3 @@ download [lokale version](https://ahornzweig.github.io/PRIMA/localGame.zip) (lok
 | 10 | Maße & Positionen     |Die Spielfigur ist 1 groß und die Gegner auf 0.5 skaliert. Die Welt wird vom Ursprung aus aufgebaut. Die positive x-Richtung ist rechts und die Negative linke. Die Positive y richtung ist oben. Der Boden wird über die Oberkannte plaziert und alle anderen Objekte über die Unterkannte, sodass wenn die Spielerfigur und der Boden beide auf y = 0 gesetzt sind, die Figur auf dem Boden steht. Der Wert für die Spilfiegur wurde gewählt, um alle anderen Größen leicht in relation zu setzen.                                                              |
 | 11 | Event-System          |  Das Event-System wird verwendet um das Drücken von Buttons oder den Klick der Maus abzugreifen. Durch das keydown-event wird handleKeyboard und handleAttack aufgerufen sie sind für die Richtung des Spielers so wie die Auswahl der Attacke zuständig. keyup ruft handleKeyboard auf. Mousemove ruft armMovement und click ruft attack auf. Sie sind da um die rotation des arms zu endern, so wie die ausgewählte attacke einzusetzen. Zusätzlich wird auf den Loop noch ein eventlistener gesetzt, der pro Frame update aufruft. Weitere cklick events sind auf den Buttons des User-Interfaces, welche Elemente ein- und ausblenden.                                                                                                                                                                                |
 
-## Abgabeformat
-* Fasse die Konzeption als ein wohlformatiertes Designdokument in PDF zusammen!
-* Platziere einen Link in der Readme-Datei deines PRIMA-Repositories auf Github auf die fertige und in Github-Pages lauffähige Anwendung.
-* Platziere ebenso Links zu den Stellen in deinem Repository, an denen der Quellcode und das Designdokument zu finden sind.
-* Stelle zudem auf diese Art dort auch ein gepacktes Archiv zur Verfügung, welches folgende Daten enthält
-  * Das Designdokument 
-  * Die Projektordner inklusive aller erforderlichen Dateien, also auch Bild- und Audiodaten
-  * Eine kurze Anleitung zur Installation der Anwendung unter Berücksichtigung erforderlicher Dienste (z.B. Heroku, MongoDB etc.) 
-  * Eine kurze Anleitung zur Interaktion mit der Anwendung
