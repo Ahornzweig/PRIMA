@@ -8,6 +8,7 @@ namespace Game {
         public maxSpeed: f.Vector3 = f.Vector3.ZERO();
         public soundId: string;
         private exploded: boolean = false;
+        private check: boolean = false;
 
         constructor(_name: string, _speedMax: number[], _id: string) {
             super(_name);
@@ -47,13 +48,17 @@ namespace Game {
         checkCollision(): void {
             for (let enemy of enemies.getChildren()) {
                 let rect: f.Rectangle = (<Enemy>enemy).getRectWorld();
-              
+
                 let hit: boolean = rect.isInside(this.cmpTransform.local.translation.toVector2());
-               // console.log(hit);
+                // console.log(hit);
                 if (hit) {
                     this.explode();
                     (<Enemy>enemy).defeated();
                     this.exploded = true;
+                    enemiesDefeated++;
+
+                    defElement = <HTMLHeadingElement>document.getElementById("defeated");
+                    defElement.innerHTML = "Defeated: " + enemiesDefeated;
                 }
             }
         }
@@ -82,6 +87,8 @@ namespace Game {
             attack.style.backgroundColor = _colldown;
 
             let timeleft: number = _time;
+
+            that.check = true;
             let downloadTimer = setInterval(function (): void {
 
                 timeleft--;
@@ -112,8 +119,9 @@ namespace Game {
             let timeFrame: number = f.Loop.timeFrameGame / 1000;
             let distance: f.Vector3 = f.Vector3.SCALE(this.speed, timeFrame);
             this.cmpTransform.local.translate(distance);
-
-            this.checkCollision();
+            if (this.check) {
+                this.checkCollision();
+            }
         }
 
         private explode(): void {
@@ -124,6 +132,7 @@ namespace Game {
             that.show(ACTION.HIT);
             that.speed.x = that.maxSpeed.x / 3;
             setTimeout(function (): void {
+                that.check = false;
                 level.removeChild(that);
                 that.show(ACTION.ATTACK);
                 that.speed.x = that.maxSpeed.x;

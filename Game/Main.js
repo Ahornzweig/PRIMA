@@ -7,6 +7,7 @@ var Game;
     let keysPressed = {};
     Game.useAttack = { 1: [true, true], 2: [false, true], 3: [false, true] };
     Game.direction = "right";
+    Game.enemiesDefeated = 0;
     let canvas;
     let nextLevelIndex;
     let lookAt = Game.f.Vector3.ZERO();
@@ -20,17 +21,20 @@ var Game;
     let fireBall;
     Game.HP = 100;
     async function loadData() {
-        let response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
         let offer = await response.text();
         Game.data = await JSON.parse(offer);
-        console.log(Game.data);
         main(Game.data);
     }
     function main(_data) {
+        loadHud();
         energy = document.getElementById("energy");
         water = document.getElementById("water");
         fire = document.getElementById("fire");
         Game.HealtBar = document.getElementById("life");
+        Game.defElement = document.getElementById("defeated");
+        Game.defElement.innerHTML = "Defeated: " + Game.enemiesDefeated;
+        console.log(Game.enemiesDefeated);
         let img = document.querySelector("img");
         canvas = document.querySelector("canvas");
         //let crc2: CanvasRenderingContext2D = canvas.getContext("2d");
@@ -63,23 +67,50 @@ var Game;
         document.addEventListener("click", attack);
         Game.f.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, update);
         Game.f.Loop.start(Game.f.LOOP_MODE.TIME_GAME, 14);
+        for (let enemy of Game.enemies.getChildren()) {
+            setTimeout(function () {
+                enemy.attack.use(5);
+            }, 5000);
+        }
         function update(_event) {
             processInput();
             let speed = Game.f.Vector3.ZERO();
             speed.x = 1.3;
             let timeFrame = Game.f.Loop.timeFrameGame / 1000;
             let distance = Game.f.Vector3.SCALE(speed, timeFrame);
-            if (keysPressed[Game.f.KEYBOARD_CODE.A]) {
-                Game.cmpCamera.pivot.translateX(-distance.x);
+            let newTranslation = Game.cmpCamera.pivot.translation;
+            newTranslation.x = Game.girl.cmpTransform.local.translation.x + 2;
+            Game.cmpCamera.pivot.translation = newTranslation;
+            lookAt.x += distance.x;
+            lookAt.x = newTranslation.x;
+            Game.cmpCamera.pivot.lookAt(lookAt);
+            if (keysPressed[Game.f.KEYBOARD_CODE.A] && Game.girl.cmpTransform.local.translation.x > -1) {
                 Game.direction = "left";
-                lookAt.x += -distance.x;
-                Game.cmpCamera.pivot.lookAt(lookAt);
             }
             if (keysPressed[Game.f.KEYBOARD_CODE.D]) {
-                Game.cmpCamera.pivot.translateX(distance.x);
-                lookAt.x += distance.x;
                 Game.direction = "right";
-                Game.cmpCamera.pivot.lookAt(lookAt);
+            }
+            let endOfLevel = Game.data.Game.Levels[Game.levelIndex].ground.transform;
+            if (Game.cmpCamera.pivot.translation.x > endOfLevel[endOfLevel.length - 2][2]) {
+                Game.f.Loop.stop();
+                Game.levelIndex = Game.data.Game.Levels[Game.levelIndex].next;
+                if (Game.levelIndex < 3) {
+                    loadNextData();
+                    console.log(Game.levelIndex);
+                }
+                else {
+                    let endScreen = document.getElementById("end-screen");
+                    let good = document.getElementById("good");
+                    let bad = document.getElementById("bad");
+                    endScreen.style.display = "block";
+                    console.log(Game.enemiesDefeated);
+                    if (Game.enemiesDefeated < 6) {
+                        good.style.display = "block";
+                    }
+                    else {
+                        bad.style.display = "block";
+                    }
+                }
             }
             Game.Girl.armNode.activate(true);
             viewport.draw();
@@ -88,10 +119,17 @@ var Game;
         }
     }
     Game.main = main;
+    let allowJump = true;
     function handleKeyboard(_event) {
         keysPressed[_event.code] = (_event.type == "keydown");
         if (_event.code == Game.f.KEYBOARD_CODE.SPACE && _event.type == "keydown") {
-            Game.girl.act(Game.ACTION.JUMP);
+            if (allowJump) {
+                Game.girl.act(Game.ACTION.JUMP);
+                allowJump = false;
+                setTimeout(function () {
+                    allowJump = true;
+                }, 1200);
+            }
         }
     }
     function handleAttack(_event) {
@@ -120,22 +158,12 @@ var Game;
             fire.className = "active";
         }
     }
-    let firstAttck = true;
     function attack(_event) {
         //style="background-color: rgb(124, 190, 212);"
         let time;
         let style;
         let styleCooldown;
-        if (firstAttck) {
-            for (let enemy of Game.enemies.getChildren()) {
-                setTimeout(function () {
-                    enemy.attack.use(5);
-                }, 2000);
-            }
-            firstAttck = false;
-        }
         if (Game.useAttack[1][0] && Game.useAttack[1][1]) {
-            console.log("test");
             time = 6;
             style = "rgba(124, 190, 212, 1)";
             styleCooldown = "rgba(124, 190, 212, 0.5)";
@@ -157,7 +185,12 @@ var Game;
     Game.attack = attack;
     function processInput() {
         if (keysPressed[Game.f.KEYBOARD_CODE.A]) {
-            Game.girl.act(Game.ACTION.WALK, Game.DIRECTION.LEFT);
+            if (Game.girl.cmpTransform.local.translation.x > -1) {
+                Game.girl.act(Game.ACTION.WALK, Game.DIRECTION.LEFT);
+            }
+            else {
+                Game.girl.speed.x = 0;
+            }
             return;
         }
         if (keysPressed[Game.f.KEYBOARD_CODE.D]) {
@@ -191,6 +224,7 @@ var Game;
             object.cmpTransform.local.translateZ(that.Z);
             object.cmpTransform.local.scaleX(that.scale[0]);
             object.cmpTransform.local.scaleY(that.scale[1]);
+            object.offset = that.scale[1];
             if (i == 1) {
                 object.cmpTransform.local.rotateY(-180);
             }
@@ -246,19 +280,173 @@ var Game;
         let currentY = -_event.movementY * rotationSpeed;
         Game.girl.rotateZ(currentY);
     }
+    function exit() {
+        window.location.reload(false);
+    }
+    Game.exit = exit;
+    async function loadNextData() {
+        let response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
+        let offer = await response.text();
+        Game.data = await JSON.parse(offer);
+        console.log(Game.data);
+        rebuildLevel(Game.data);
+    }
+    function rebuildLevel(_data) {
+        let levelData = Game.data.Game.Levels[Game.levelIndex];
+        //console.log(levelData);
+        let gameOver = document.getElementById("gameover-screen");
+        gameOver.style.display = "none";
+        let gameInterface = document.getElementById("game-interface");
+        let canvas = document.querySelector("canvas");
+        gameInterface.style.display = "block";
+        canvas.style.display = "block";
+        Game.HP = 100;
+        Game.HealtBar.innerHTML = Game.HP + " HP";
+        Game.HealtBar.style.width = Game.HP * 2 + "px";
+        let newTranslation = Game.f.Vector3.ZERO();
+        newTranslation.x = levelData.girlPos[0];
+        newTranslation.y = levelData.girlPos[1];
+        newTranslation.z = 0;
+        Game.girl.cmpTransform.local.translation = newTranslation;
+        //girl.cmpTransform.local.translateX(levelData.girlPos[0]);
+        //girl.cmpTransform.local.translateY(levelData.girlPos[0]);
+        newTranslation.x = levelData.camPos[0];
+        newTranslation.y = levelData.camPos[1];
+        newTranslation.z = levelData.camPos[2];
+        Game.cmpCamera.pivot.translation = newTranslation;
+        lookAt.set(levelData.camPos[0], levelData.camPos[1], 0);
+        Game.cmpCamera.pivot.lookAt(lookAt);
+        let that;
+        let fishI = 0;
+        let monkyI = 0;
+        for (let i = 0; i < Game.enemies.getChildren().length; i++) {
+            let enemy = Game.enemies.getChildren()[i];
+            if (enemy.name == "fish") {
+                that = levelData.enemys[0];
+                //moveObjects(enemy, that, fishI);
+                enemy.enemies = that.positions[fishI];
+                enemy.index = that.index[fishI];
+                newTranslation.x = that.positions[fishI][enemy.index][0];
+                newTranslation.y = that.positions[fishI][enemy.index][1];
+                newTranslation.z = 0;
+                enemy.cmpTransform.local.translation = newTranslation;
+                fishI++;
+            }
+            else if (enemy.name == "monky") {
+                that = levelData.enemys[1];
+                enemy.enemies = that.positions[monkyI];
+                enemy.index = that.index[monkyI];
+                newTranslation.x = that.positions[monkyI][enemy.index][0];
+                newTranslation.y = that.positions[monkyI][enemy.index][1];
+                newTranslation.z = 0;
+                enemy.cmpTransform.local.translation = newTranslation;
+                monkyI++;
+            }
+        }
+        let leafI = 0;
+        let pineI = 0;
+        let slimI = 0;
+        for (let i = 0; i < Game.natures.getChildren().length; i++) {
+            let nature = Game.natures.getChildren()[i];
+            if (nature.name == "LeafTree") {
+                that = levelData.nature[0];
+                nature.objects = that.positions[leafI];
+                nature.index = that.index[leafI];
+                newTranslation.x = that.positions[leafI][nature.index][0];
+                newTranslation.y = that.positions[leafI][nature.index][1];
+                newTranslation.z = 0;
+                nature.cmpTransform.local.translation = newTranslation;
+                leafI++;
+            }
+            else if (nature.name == "PineTree") {
+                that = levelData.nature[1];
+                nature.objects = that.positions[pineI];
+                nature.index = that.index[pineI];
+                newTranslation.x = that.positions[pineI][nature.index][0];
+                newTranslation.y = that.positions[pineI][nature.index][1];
+                newTranslation.z = 0;
+                nature.cmpTransform.local.translation = newTranslation;
+                pineI++;
+            }
+            else if (nature.name == "SlimTree") {
+                that = levelData.nature[2];
+                nature.objects = that.positions[slimI];
+                nature.index = that.index[slimI];
+                newTranslation.x = that.positions[slimI][nature.index][0];
+                newTranslation.y = that.positions[slimI][nature.index][1];
+                newTranslation.z = 0;
+                nature.cmpTransform.local.translation = newTranslation;
+                slimI++;
+            }
+        }
+        let txtImageBackground;
+        let bgImg = document.getElementById(levelData.background.id);
+        txtImageBackground = new Game.f.TextureImage();
+        txtImageBackground.image = bgImg;
+        Game.backgrounds.removeChild(Game.backgrounds.getChildren()[0]);
+        Game.backgrounds.removeChild(Game.backgrounds.getChildren()[0]);
+        that = levelData.background;
+        Game.Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
+        for (let i = 0; i < that.positions.length; i++) {
+            let object = new Game.Object(that.name, that.positions[i], that.index[i], that.Z);
+            object.cmpTransform.local.translateX(that.positions[i][that.index[i]][0]);
+            object.cmpTransform.local.translateY(that.positions[i][that.index[i]][1]);
+            object.cmpTransform.local.translateZ(that.Z);
+            object.cmpTransform.local.scaleX(that.scale[0]);
+            object.cmpTransform.local.scaleY(that.scale[1]);
+            object.offset = that.scale[1];
+            if (i == 1) {
+                object.cmpTransform.local.rotateY(-180);
+            }
+            Game.backgrounds.appendChild(object);
+        }
+        for (let i = 0; i < Game.tiles.getChildren().length; i++) {
+            let tile = Game.tiles.getChildren()[i];
+            that = levelData.ground;
+            tile.index = that.index[i];
+            tile.floors = that.transform;
+            newTranslation.x = that.transform[i][2];
+            newTranslation.y = that.transform[i][3];
+            newTranslation.z = 0;
+            tile.cmpTransform.local.translation = newTranslation;
+        }
+        Game.f.Loop.timeFrameGame = 0;
+        Game.f.Loop.start(Game.f.LOOP_MODE.TIME_GAME, 14);
+    }
+    Game.rebuildLevel = rebuildLevel;
     function loadHud() {
-        let saveScreen = document.getElementById("save-screen");
-        saveScreen.style.display = "none";
+        /*let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
+        saveScreen.style.display = "none";*/
         let gameInterface = document.getElementById("game-interface");
         gameInterface.style.display = "block";
+        let exitButton = document.getElementById("exit");
+        //let retryButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("retry");
+        exitButton.addEventListener("click", exit);
+        //retryButton.addEventListener("click", retry);
     }
     Game.loadHud = loadHud;
-    function loadGame() {
+    function loadLevel(_event) {
         Game.levelIndex = 0;
-        let saveScreen = document.getElementById("save-screen");
-        saveScreen.style.display = "block";
-        let loadButton = document.getElementById("Load");
-        loadButton.addEventListener("click", loadHud);
+        let id = _event.target.id;
+        if (id == "level2") {
+            Game.levelIndex = 1;
+        }
+        else if (id == "level3") {
+            Game.levelIndex = 2;
+        }
+        let loadScreen = document.getElementById("load-screen");
+        loadScreen.style.display = "none";
+        loadData();
+    }
+    function loadGame() {
+        let loadScreen = document.getElementById("load-screen");
+        loadScreen.style.display = "block";
+        let level1 = document.getElementById("level1");
+        level1.addEventListener("click", loadLevel);
+        let level2 = document.getElementById("level2");
+        level2.addEventListener("click", loadLevel);
+        let level3 = document.getElementById("level3");
+        level3.addEventListener("click", loadLevel);
     }
     function start() {
         Game.levelIndex = 0;

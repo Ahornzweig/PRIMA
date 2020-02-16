@@ -50,20 +50,28 @@ var Game;
             let rect = Game.girl.getRectWorld();
             let hit = rect.isInside(this.cmpTransform.local.translation.toVector2());
             if (hit) {
-                console.log(hit);
                 if (!this.exploded) {
                     Game.HP -= 10;
                     Game.HealtBar.innerHTML = Game.HP + " HP";
                     Game.HealtBar.style.width = Game.HP * 2 + "px";
+                    if (Game.HP == 0) {
+                        f.Loop.stop();
+                        let gameOver = document.getElementById("gameover-screen");
+                        gameOver.style.display = "block";
+                        let gameInterface = document.getElementById("game-interface");
+                        let canvas = document.querySelector("canvas");
+                        gameInterface.style.display = "none";
+                        canvas.style.display = "none";
+                    }
                 }
                 this.exploded = true;
                 this.explode();
             }
         }
         use(_time) {
-            let attackDirection = (Game.direction == "right" ? -1 : 1);
+            let attackDirection = (Game.direction == "right" ? 1 : -1);
             let newRotation = f.Vector3.ZERO();
-            newRotation.z = Game.girl.getRotation() * attackDirection;
+            newRotation.z = 225 * attackDirection;
             newRotation.y = (90 - 90 * attackDirection);
             let newTranslation = f.Vector3.ZERO();
             newTranslation.x = this.user.cmpTransform.local.translation.x;

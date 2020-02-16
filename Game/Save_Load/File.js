@@ -73,12 +73,17 @@ var Game;
             //logFile(file);
             const offer = await new Response(file).text();
             Game.data = await JSON.parse(offer);
+            Game.levelIndex = 0;
+            Game.enemiesDefeated = Game.data.Game.Levels[Game.levelIndex].defeated;
             Game.main(Game.data);
+            let loadScreen = document.getElementById("load-screen");
+            loadScreen.style.display = "none";
             let name = document.getElementById("name");
             name.innerHTML = Game.data.Game.Levels[Game.levelIndex].userName;
             Game.HP = Game.data.Game.Levels[Game.levelIndex].HP;
             Game.HealtBar.innerHTML = Game.HP + " HP";
             Game.HealtBar.style.width = Game.HP * 2 + "px";
+            //levelIndex = data.Game.Levels[levelIndex].next - 1;
             console.log(Game.data);
             //logContent(data);
         }

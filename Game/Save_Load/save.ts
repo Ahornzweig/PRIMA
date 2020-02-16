@@ -56,10 +56,12 @@ namespace Game {
         let enemys: {} = levelData.enemys;
         let girlPos: number[] = [girl.cmpTransform.local.translation.x, girl.cmpTransform.local.translation.y];
         let camPos: number[] = [cmpCamera.pivot.translation.x, cmpCamera.pivot.translation.y, cmpCamera.pivot.translation.z];
+        let defeated: number = enemiesDefeated;
+
 
         let saveData: {} = {
             "Game": {
-                "Levels": [{ background, name, ground, nature, enemys, next, userName, HP, girlPos, camPos }]
+                "Levels": [{ background, name, ground, nature, enemys, next, userName, HP, girlPos, camPos, defeated }]
             }
         };
 

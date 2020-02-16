@@ -8,12 +8,15 @@ var Game;
             this.speed = f.Vector3.ZERO();
             this.maxSpeed = f.Vector3.ZERO();
             this.exploded = false;
+            this.check = false;
             this.update = (_event) => {
                 this.broadcastEvent(new CustomEvent("showNext"));
                 let timeFrame = f.Loop.timeFrameGame / 1000;
                 let distance = f.Vector3.SCALE(this.speed, timeFrame);
                 this.cmpTransform.local.translate(distance);
-                this.checkCollision();
+                if (this.check) {
+                    this.checkCollision();
+                }
             };
             this.speed.x = _speedMax[0];
             this.speed.y = _speedMax[1];
@@ -47,6 +50,9 @@ var Game;
                     this.explode();
                     enemy.defeated();
                     this.exploded = true;
+                    Game.enemiesDefeated++;
+                    Game.defElement = document.getElementById("defeated");
+                    Game.defElement.innerHTML = "Defeated: " + Game.enemiesDefeated;
                 }
             }
         }
@@ -68,6 +74,7 @@ var Game;
             let name = attack.innerHTML;
             attack.style.backgroundColor = _colldown;
             let timeleft = _time;
+            that.check = true;
             let downloadTimer = setInterval(function () {
                 timeleft--;
                 attack.innerHTML = timeleft + "";
@@ -93,6 +100,7 @@ var Game;
             that.show(Game.ACTION.HIT);
             that.speed.x = that.maxSpeed.x / 3;
             setTimeout(function () {
+                that.check = false;
                 Game.level.removeChild(that);
                 that.show(Game.ACTION.ATTACK);
                 that.speed.x = that.maxSpeed.x;

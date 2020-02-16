@@ -65,11 +65,20 @@ namespace Game {
             let hit: boolean = rect.isInside(this.cmpTransform.local.translation.toVector2());
 
             if (hit) {
-                console.log(hit);
                 if (!this.exploded) {
                     HP -= 10;
                     HealtBar.innerHTML = HP + " HP";
                     HealtBar.style.width = HP * 2 + "px";
+                    if (HP == 0) {
+                        f.Loop.stop();
+
+                        let gameOver: HTMLDivElement = <HTMLDivElement>document.getElementById("gameover-screen");
+                        gameOver.style.display = "block";
+                        let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
+                        let canvas: HTMLCanvasElement = document.querySelector("canvas");
+                        gameInterface.style.display = "none";
+                        canvas.style.display = "none";
+                    }
                 }
                 this.exploded = true;
                 this.explode();
@@ -78,10 +87,10 @@ namespace Game {
         }
 
         public use(_time: number): void {
-            let attackDirection: number = (direction == "right" ? -1 : 1);
+            let attackDirection: number = (direction == "right" ? 1 : -1);
 
             let newRotation: f.Vector3 = f.Vector3.ZERO();
-            newRotation.z = girl.getRotation() * attackDirection;
+            newRotation.z = 225 * attackDirection;
             newRotation.y = (90 - 90 * attackDirection);
 
             let newTranslation: f.Vector3 = f.Vector3.ZERO();

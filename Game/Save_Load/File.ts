@@ -84,13 +84,18 @@ namespace Game {
             //logFile(file);
             const offer: string = await new Response(file).text();
             data = await JSON.parse(offer);
+            levelIndex = 0;
+            enemiesDefeated = data.Game.Levels[levelIndex].defeated;
             main(data);
-            
+            let loadScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("load-screen");
+            loadScreen.style.display = "none";
             let name: HTMLHeadingElement = <HTMLHeadingElement>document.getElementById("name");
             name.innerHTML = data.Game.Levels[levelIndex].userName;
             HP = data.Game.Levels[levelIndex].HP;
             HealtBar.innerHTML = HP + " HP";
             HealtBar.style.width = HP * 2 + "px";
+
+            //levelIndex = data.Game.Levels[levelIndex].next - 1;
             console.log(data);
             //logContent(data);
         }

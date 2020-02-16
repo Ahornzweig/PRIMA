@@ -46,9 +46,10 @@ var Game;
         let enemys = levelData.enemys;
         let girlPos = [Game.girl.cmpTransform.local.translation.x, Game.girl.cmpTransform.local.translation.y];
         let camPos = [Game.cmpCamera.pivot.translation.x, Game.cmpCamera.pivot.translation.y, Game.cmpCamera.pivot.translation.z];
+        let defeated = Game.enemiesDefeated;
         let saveData = {
             "Game": {
-                "Levels": [{ background, name, ground, nature, enemys, next, userName, HP: Game.HP, girlPos, camPos }]
+                "Levels": [{ background, name, ground, nature, enemys, next, userName, HP: Game.HP, girlPos, camPos, defeated }]
             }
         };
         console.log(saveData);

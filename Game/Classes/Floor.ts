@@ -8,7 +8,7 @@ namespace Game {
 
     public index: number;
 
-    private floors: number[][];
+    public floors: number[][];
 
     public constructor(_data: number[][], _index: number) {
       super("Floor");
@@ -54,12 +54,12 @@ namespace Game {
         }
       } else if (direction == "left") {
 
-        if ((this.index - 3) > 0) {
+        if ((this.index - 3) >= 0) {
           this.index -= 3;
 
           let newTranslation: f.Vector3 = f.Vector3.ZERO();
-          newTranslation.x = this.floors[this.index][0];
-          newTranslation.y = this.floors[this.index][1];
+          newTranslation.x = this.floors[this.index][2];
+          newTranslation.y = this.floors[this.index][3];
 
           this.cmpTransform.local.translation = newTranslation;
         }

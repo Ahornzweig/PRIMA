@@ -23,17 +23,14 @@ function newGame() {
 }
 function buildGame() {
     let newGame = document.getElementById("new-game");
-    let gameInterface = document.getElementById("game-interface");
+    //let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
     let input = document.getElementById("user-name");
     let name = document.getElementById("name");
     name.innerHTML = input.value;
-    gameInterface.style.display = "block";
+    //gameInterface.style.display = "block";
     newGame.style.display = "none";
 }
-/*function saveGame(): void {
-    let newGame: HTMLDivElement = <HTMLDivElement>document.getElementById("new-game");
-
-    newGame.style.display = "none";
-
-}*/
+function reload() {
+    window.location.reload(false);
+}
 //# sourceMappingURL=start.js.map

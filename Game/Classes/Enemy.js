@@ -111,8 +111,12 @@ var Game;
                 }
             }
             else if (this.enemies.length == 1) {
+                let newTranslation = f.Vector3.ZERO();
+                newTranslation.x = -5;
+                newTranslation.y = -3;
+                this.cmpTransform.local.translation = newTranslation;
                 this.enemies.splice(tempIndex, 1);
-                Game.enemies.removeChild(this);
+                //enemies.removeChild(this);
             }
             console.log(this.enemies);
         }

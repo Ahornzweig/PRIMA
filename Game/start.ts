@@ -32,19 +32,18 @@ function newGame(): void {
 
 function buildGame(): void {
     let newGame: HTMLDivElement = <HTMLDivElement>document.getElementById("new-game");
-    let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
+    //let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
     let input: HTMLInputElement = <HTMLInputElement>document.getElementById("user-name");
     let name: HTMLHeadingElement = <HTMLHeadingElement>document.getElementById("name");
 
     name.innerHTML = input.value;
-    gameInterface.style.display = "block";
+    //gameInterface.style.display = "block";
     newGame.style.display = "none";
 
 }
 
-/*function saveGame(): void {
-    let newGame: HTMLDivElement = <HTMLDivElement>document.getElementById("new-game");
 
-    newGame.style.display = "none";
+function reload(): void {
+    window.location.reload(false);
+}
 
-}*/

@@ -29,6 +29,7 @@ namespace Game {
 
   export let data: Data;
   export let levelIndex: number;
+  export let enemiesDefeated: number = 0;
   let canvas: HTMLCanvasElement;
   let nextLevelIndex: number;
   let lookAt: f.Vector3 = f.Vector3.ZERO();
@@ -37,6 +38,8 @@ namespace Game {
   let energy: HTMLDivElement;
   let water: HTMLDivElement;
   let fire: HTMLDivElement;
+  export let defElement: HTMLHeadingElement;
+
   let energyBall: Attack;
   let waterArrow: Attack;
   let fireBall: Attack;
@@ -44,19 +47,24 @@ namespace Game {
   export let HP: number = 100;
 
   async function loadData(): Promise<void> {
-    let response: Response = await fetch("gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
     let offer: string = await response.text();
     data = await JSON.parse(offer);
-    console.log(data);
+
     main(data);
   }
 
   export function main(_data: Data): void {
 
+    loadHud();
     energy = <HTMLDivElement>document.getElementById("energy");
     water = <HTMLDivElement>document.getElementById("water");
     fire = <HTMLDivElement>document.getElementById("fire");
     HealtBar = <HTMLDivElement>document.getElementById("life");
+
+    defElement = <HTMLHeadingElement>document.getElementById("defeated");
+    defElement.innerHTML = "Defeated: " + enemiesDefeated;
+    console.log(enemiesDefeated);
 
     let img: HTMLImageElement = document.querySelector("img");
     canvas = document.querySelector("canvas");
@@ -99,6 +107,13 @@ namespace Game {
     f.Loop.addEventListener(f.EVENT.LOOP_FRAME, update);
     f.Loop.start(f.LOOP_MODE.TIME_GAME, 14);
 
+    for (let enemy of enemies.getChildren()) {
+      setTimeout(function (): void {
+        (<Enemy>enemy).attack.use(5);
+      }, 5000);
+    }
+
+
     function update(_event: f.Eventƒ): void {
       processInput();
       let speed: f.Vector3 = f.Vector3.ZERO();
@@ -106,17 +121,42 @@ namespace Game {
       let timeFrame: number = f.Loop.timeFrameGame / 1000;
       let distance: f.Vector3 = f.Vector3.SCALE(speed, timeFrame);
 
-      if (keysPressed[f.KEYBOARD_CODE.A]) {
-        cmpCamera.pivot.translateX(-distance.x);
+      let newTranslation: f.Vector3 = cmpCamera.pivot.translation;
+      newTranslation.x = girl.cmpTransform.local.translation.x + 2;
+      cmpCamera.pivot.translation = newTranslation;
+      lookAt.x += distance.x;
+      lookAt.x = newTranslation.x;
+      cmpCamera.pivot.lookAt(lookAt);
+
+      if (keysPressed[f.KEYBOARD_CODE.A] && girl.cmpTransform.local.translation.x > -1) {
+
         direction = "left";
-        lookAt.x += - distance.x;
-        cmpCamera.pivot.lookAt(lookAt);
       }
       if (keysPressed[f.KEYBOARD_CODE.D]) {
-        cmpCamera.pivot.translateX(distance.x);
-        lookAt.x += distance.x;
+
         direction = "right";
-        cmpCamera.pivot.lookAt(lookAt);
+      }
+
+      let endOfLevel: number[][] = data.Game.Levels[levelIndex].ground.transform;
+      if (cmpCamera.pivot.translation.x > endOfLevel[endOfLevel.length - 2][2]) {
+        f.Loop.stop();
+        levelIndex = data.Game.Levels[levelIndex].next;
+        if (levelIndex < 3) {
+          loadNextData();
+          console.log(levelIndex);
+        } else {
+          let endScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("end-screen");
+          let good: HTMLDivElement = <HTMLDivElement>document.getElementById("good");
+          let bad: HTMLDivElement = <HTMLDivElement>document.getElementById("bad");
+
+          endScreen.style.display = "block";
+          console.log(enemiesDefeated);
+          if (enemiesDefeated < 6) {
+            good.style.display = "block";
+          } else {
+            bad.style.display = "block";
+          }
+        }
       }
       Girl.armNode.activate(true);
       viewport.draw();
@@ -126,10 +166,18 @@ namespace Game {
     }
   }
 
+  let allowJump: boolean = true;
+
   function handleKeyboard(_event: KeyboardEvent): void {
     keysPressed[_event.code] = (_event.type == "keydown");
     if (_event.code == f.KEYBOARD_CODE.SPACE && _event.type == "keydown") {
-      girl.act(ACTION.JUMP);
+      if (allowJump) {
+        girl.act(ACTION.JUMP);
+        allowJump = false;
+        setTimeout(function (): void {
+          allowJump = true;
+        }, 1200);
+      }
     }
   }
 
@@ -160,24 +208,14 @@ namespace Game {
     }
   }
 
-  let firstAttck: boolean = true;
   export function attack(_event: MouseEvent): void {
     //style="background-color: rgb(124, 190, 212);"
     let time: number;
     let style: string;
     let styleCooldown: string;
 
-    if (firstAttck) {
-      for (let enemy of enemies.getChildren()) {
-        setTimeout(function (): void {
-          (<Enemy>enemy).attack.use(5);
-        }, 2000);
-      }
-      firstAttck = false;
-    }
-
     if (useAttack[1][0] && useAttack[1][1]) {
-      console.log("test");
+
       time = 6;
       style = "rgba(124, 190, 212, 1)";
       styleCooldown = "rgba(124, 190, 212, 0.5)";
@@ -200,7 +238,11 @@ namespace Game {
 
   function processInput(): void {
     if (keysPressed[f.KEYBOARD_CODE.A]) {
-      girl.act(ACTION.WALK, DIRECTION.LEFT);
+      if (girl.cmpTransform.local.translation.x > -1) {
+        girl.act(ACTION.WALK, DIRECTION.LEFT);
+      } else {
+        girl.speed.x = 0;
+      }
       return;
     }
     if (keysPressed[f.KEYBOARD_CODE.D]) {
@@ -246,6 +288,7 @@ namespace Game {
       object.cmpTransform.local.translateZ(that.Z);
       object.cmpTransform.local.scaleX(that.scale[0]);
       object.cmpTransform.local.scaleY(that.scale[1]);
+      object.offset = that.scale[1];
       if (i == 1) {
         object.cmpTransform.local.rotateY(-180);
       }
@@ -304,7 +347,6 @@ namespace Game {
       floor.cmpTransform.local.translateY(that[3]);
       tiles.appendChild(floor);
     }
-
     level.appendChild(tiles);
     return level;
   }
@@ -314,23 +356,208 @@ namespace Game {
     girl.rotateZ(currentY);
   }
 
+  export function exit(): void {
+    window.location.reload(false);
+  }
+
+  async function loadNextData(): Promise<void> {
+    let response: Response = await fetch("https://ahornzweig.github.io/PRIMA/Game/gameData.json"); //https://ahornzweig.github.io/PRIMA/Game/gameData.json
+    let offer: string = await response.text();
+    data = await JSON.parse(offer);
+    console.log(data);
+    rebuildLevel(data);
+  }
+
+  export function rebuildLevel(_data): void {
+
+    let levelData = data.Game.Levels[levelIndex];
+    //console.log(levelData);
+
+    let gameOver: HTMLDivElement = <HTMLDivElement>document.getElementById("gameover-screen");
+    gameOver.style.display = "none";
+    let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
+    let canvas: HTMLCanvasElement = document.querySelector("canvas");
+    gameInterface.style.display = "block";
+    canvas.style.display = "block";
+
+    HP = 100;
+    HealtBar.innerHTML = HP + " HP";
+    HealtBar.style.width = HP * 2 + "px";
+
+    let newTranslation: f.Vector3 = f.Vector3.ZERO();
+
+    newTranslation.x = levelData.girlPos[0];
+    newTranslation.y = levelData.girlPos[1];
+    newTranslation.z = 0;
+    girl.cmpTransform.local.translation = newTranslation;
+
+    //girl.cmpTransform.local.translateX(levelData.girlPos[0]);
+    //girl.cmpTransform.local.translateY(levelData.girlPos[0]);
+
+    newTranslation.x = levelData.camPos[0];
+    newTranslation.y = levelData.camPos[1];
+    newTranslation.z = levelData.camPos[2];
+    cmpCamera.pivot.translation = newTranslation;
+    lookAt.set(levelData.camPos[0], levelData.camPos[1], 0);
+    cmpCamera.pivot.lookAt(lookAt);
+
+    let that;
+
+    let fishI: number = 0;
+    let monkyI: number = 0;
+
+    for (let i: number = 0; i < enemies.getChildren().length; i++) {
+      let enemy: Enemy = <Enemy>enemies.getChildren()[i];
+      if (enemy.name == "fish") {
+        that = levelData.enemys[0];
+        //moveObjects(enemy, that, fishI);
+        enemy.enemies = that.positions[fishI];
+        enemy.index = that.index[fishI];
+        newTranslation.x = that.positions[fishI][enemy.index][0];
+        newTranslation.y = that.positions[fishI][enemy.index][1];
+        newTranslation.z = 0;
+        enemy.cmpTransform.local.translation = newTranslation;
+        
+        fishI++;
+      } else if (enemy.name == "monky") {
+        that = levelData.enemys[1];
+        
+        enemy.enemies = that.positions[monkyI];
+        enemy.index = that.index[monkyI];
+        newTranslation.x = that.positions[monkyI][enemy.index][0];
+        newTranslation.y = that.positions[monkyI][enemy.index][1];
+        newTranslation.z = 0;
+        enemy.cmpTransform.local.translation = newTranslation;
+
+        monkyI++;
+      }
+    }
+
+    let leafI: number = 0;
+    let pineI: number = 0;
+    let slimI: number = 0;
+
+    for (let i: number = 0; i < natures.getChildren().length; i++) {
+      let nature: Object = <Object>natures.getChildren()[i];
+      if (nature.name == "LeafTree") {
+        that = levelData.nature[0];
+        
+        nature.objects = that.positions[leafI];
+        nature.index = that.index[leafI];
+        newTranslation.x = that.positions[leafI][nature.index][0];
+        newTranslation.y = that.positions[leafI][nature.index][1];
+        newTranslation.z = 0;
+        nature.cmpTransform.local.translation = newTranslation;
+
+        leafI++;
+      } else if (nature.name == "PineTree") {
+        that = levelData.nature[1];
+
+        nature.objects = that.positions[pineI];
+        nature.index = that.index[pineI];
+
+        newTranslation.x = that.positions[pineI][nature.index][0];
+        newTranslation.y = that.positions[pineI][nature.index][1];
+        newTranslation.z = 0;
+        nature.cmpTransform.local.translation = newTranslation;
+
+        pineI++;
+      } else if (nature.name == "SlimTree") {
+        that = levelData.nature[2];
+        
+        nature.objects = that.positions[slimI];
+        nature.index = that.index[slimI];
+
+        newTranslation.x = that.positions[slimI][nature.index][0];
+        newTranslation.y = that.positions[slimI][nature.index][1];
+        newTranslation.z = 0;
+        nature.cmpTransform.local.translation = newTranslation;
+
+        slimI++;
+      }
+    }
+
+    let txtImageBackground: f.TextureImage;
+    let bgImg: HTMLImageElement = <HTMLImageElement>document.getElementById(levelData.background.id);
+    txtImageBackground = new f.TextureImage();
+    txtImageBackground.image = bgImg;
+
+    backgrounds.removeChild(backgrounds.getChildren()[0]);
+    backgrounds.removeChild(backgrounds.getChildren()[0]);
+
+    that = levelData.background;
+    Object.generateSprites(txtImageBackground, that.name, that.spritsheetData);
+
+    for (let i: number = 0; i < that.positions.length; i++) {
+      let object: Object = new Object(that.name, that.positions[i], that.index[i], that.Z);
+      object.cmpTransform.local.translateX(that.positions[i][that.index[i]][0]);
+      object.cmpTransform.local.translateY(that.positions[i][that.index[i]][1]);
+      object.cmpTransform.local.translateZ(that.Z);
+      object.cmpTransform.local.scaleX(that.scale[0]);
+      object.cmpTransform.local.scaleY(that.scale[1]);
+      object.offset = that.scale[1];
+      if (i == 1) {
+        object.cmpTransform.local.rotateY(-180);
+      }
+      backgrounds.appendChild(object);
+    }
+
+    for (let i: number = 0; i < tiles.getChildren().length; i++) {
+      let tile: Floor = <Floor>tiles.getChildren()[i];
+
+      that = levelData.ground;
+
+      tile.index = that.index[i];
+      tile.floors = that.transform;
+
+      newTranslation.x = that.transform[i][2];
+      newTranslation.y = that.transform[i][3];
+      newTranslation.z = 0;
+      tile.cmpTransform.local.translation = newTranslation;
+
+    }
+    f.Loop.timeFrameGame = 0;
+    f.Loop.start(f.LOOP_MODE.TIME_GAME, 14);
+
+  }
+
   export function loadHud(): void {
 
-    let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
-    saveScreen.style.display = "none";
+    /*let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
+    saveScreen.style.display = "none";*/
 
     let gameInterface: HTMLDivElement = <HTMLDivElement>document.getElementById("game-interface");
-
     gameInterface.style.display = "block";
+
+    let exitButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("exit");
+    //let retryButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("retry");
+    exitButton.addEventListener("click", exit);
+    //retryButton.addEventListener("click", retry);
+  }
+
+  function loadLevel(_event: MouseEvent): void {
+    levelIndex = 0;
+    let id: string = _event.target.id;
+    if (id == "level2") {
+      levelIndex = 1;
+    } else if (id == "level3") {
+      levelIndex = 2;
+    }
+    let loadScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("load-screen");
+    loadScreen.style.display = "none";
+    loadData();
   }
 
   function loadGame(): void {
-    levelIndex = 0;
-    let saveScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("save-screen");
-    saveScreen.style.display = "block";
-    let loadButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("Load");
-    loadButton.addEventListener("click", loadHud);
+    let loadScreen: HTMLDivElement = <HTMLDivElement>document.getElementById("load-screen");
+    loadScreen.style.display = "block";
 
+    let level1: HTMLButtonElement = <HTMLButtonElement>document.getElementById("level1");
+    level1.addEventListener("click", loadLevel);
+    let level2: HTMLButtonElement = <HTMLButtonElement>document.getElementById("level2");
+    level2.addEventListener("click", loadLevel);
+    let level3: HTMLButtonElement = <HTMLButtonElement>document.getElementById("level3");
+    level3.addEventListener("click", loadLevel);
   }
 
   function start(): void {
@@ -341,7 +568,6 @@ namespace Game {
     let loadButton: HTMLButtonElement = <HTMLButtonElement>document.getElementById("load-game");
     loadButton.addEventListener("click", loadGame);
   }
-
 
   window.addEventListener("load", start);
 }
