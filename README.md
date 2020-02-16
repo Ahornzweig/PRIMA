@@ -13,7 +13,7 @@ link zum Archiv: https://github.com/Ahornzweig/PRIMA/tree/master/Archiv
 
 [download Archiv]( https://ahornzweig.github.io/PRIMA/Archiv.zip )
 
-link zur lokale version (lokaler server erforderlich): https://github.com/Ahornzweig/PRIMA/tree/master/localGame
+download [lokale version](https://ahornzweig.github.io/PRIMA/localGame.zip) (lokaler server erforderlich)
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
