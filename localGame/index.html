@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>[GirlHero]</title>
+
+  <script src="Fudge/FudgeCore.js"></script>
+  <script src="L14_ScrollerFoundation/SpriteGenerator.js"></script>
+  <script src="Classes/Floor.js"></script>
+  <script src="Classes/Objects.js"></script>
+  <script src="Classes/movingObjects.js"></script>
+  <script src="Classes/Attack.js"></script>
+  <script src="Classes/EnemyAttack.js"></script>
+  <script src="Classes/Girl.js"></script>
+  <script src="Classes/Enemy.js"></script>
+  <script src="Save_Load/File.js"></script>
+  <script src="Main.js"></script>
+  <script src="Save_Load/save.js"></script>
+  <script src="interface.js"></script>
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+  <canvas style="background-color: aliceblue;"></canvas>
+  <img src="src/Spritesheet.png">
+  <img id="mountain" src="src/mountain.png"><!--für local src/mountain.png-->
+  <img id="mountain2" src="src/snakeMountain.png"> <!--für local src/snakeMountain.png-->
+  <img id="forest" src="src/forest.jpg"><!--für lokal src/forest.png-->
+ 
+  <div id="user-interface">
+    <h1>[Quest of the GirlHero]</h1>
+    <div class="options">
+      <button onclick="newGame()">New Game</button>
+      <button id="load-game" onclick="loadGame()">Load Game</button>
+      <button onclick="howTo()">How to play</button>
+    </div>
+    <div style="position: absolute; bottom: 5%; left: 5%;">
+      <h3>Credits:</h3>
+      Background musik: bensound.com<br>
+      <br>
+    </div>
+  </div>
+
+  <div id="how-to-play">
+    <div>
+      <h3>MOVEMENT:</h3>A = Left, D = Right, SPACE = Jump
+    </div>
+    <div>
+      <h3>Attack:</h3>Left mousebutton use seleckted attack<br>Move mouse to change attack direction (your attack will
+      go where the staff is pointing at, not to the coursor position)<br>change
+      selected attack with numbers(1 or 2)
+    </div>
+    <div>
+      <h3>RULES:</h3>if your health is depleated you loose the game. Restart the game or load a savefile.<br>After each
+      level your hp will be restored.
+    </div>
+    <br>
+    <button onclick="startScreen()">back</button>
+  </div>
+
+  <div id="new-game">
+    <div style="margin-bottom: 50px;">
+      <h3>Enter your Name:</h3>
+      <p>max. 10 characters</p>
+      <input type="text" id="user-name" name="name" placeholder="name" required maxlength="10" size="10">
+      <p>You are in a world of magic, where every creature can use their energy to attack.<br>
+        You have been send to retreave the legendary snake, who lives in the mountains of this land.<br>
+        On your way you will find many hostile creatures who are afraid of Humans.<br>
+        How you deal with them is up too you!
+      </p>
+    </div>
+    <button id="start" onclick="buildGame()">Start</button>
+  </div>
+
+  <div id="game-interface">
+    <h2 id="name">GirlHero</h2>
+    <div id="life">100 HP</div>
+    <div id="attacks">
+      <div id="energy" class="active" style="background-color: rgba(124, 190, 212, 1);">Energie Ball</div>
+      <div id="water" style="background-color: rgb(0, 0, 105);">Wasser Pfeil</div>
+    </div>
+    <h2 id="defeated" style="position: absolute; left: 5%;">defeated: 0</h2>
+    <button id="to-save">Pause and Save</button>
+  </div>
+
+  <div id="gameover-screen">
+    <h2>GAME OVER</h2>
+    <div class="options">
+      <button id="exit" onclick="reload()">Exit</button>
+    </div>
+  </div>
+
+  <div id="save-screen">
+    <div class="options">
+      <fieldset>
+        <legend>
+          <h2>Save</h2>
+        </legend>
+        <p>Enter the the preferred name for your save file. End the name with .json<br>
+          Then press the save-button. After that you can close the page or press exit<br><br>
+          Example: SarahsSave.json</p>
+        <input id="Filename" />
+        <button id="Save">Save</button>
+        <textarea cols="80" rows="20"></textarea>
+      </fieldset>
+    </div>
+    <button onclick="reload()" style="position: absolute; bottom: 5%; right: 5%;">Exit</button>
+    <button id="continue" style="position: absolute; bottom: 5%; left: 5%;">continue</button>
+  </div>
+
+  <div id="load-screen">
+    <div class="options">
+      <button id="Load">Load Savedata</button>
+      <button id="level1">Level 1</button>
+      <button id="level2">Level 2</button>
+      <button id="level3">Level 3</button>
+    </div>
+    <button onclick="startScreen()" style="position: absolute; bottom: 5%; right: 5%;">back</button>
+  </div>
+
+  <div id="end-screen">
+    <div class="options">
+      <p id="good">You have spared the lives of the wild animals.<br>
+        The snake will come with you without a fight.
+      </p>
+      <p id="bad">You have killed many wild animals.<br>
+        The snake won't come with you without a fight.
+      </p>
+    </div>
+    <button onclick="reload()" style="position: absolute; bottom: 5%; right: 5%;">Exit</button>
+  </div>
+
+
+  <audio id="boom">
+    <source src="src/boom.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="boomEnemy">
+    <source src="src/boom.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="splash">
+    <source src="src/splash.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="jump">
+    <source src="src/jump.mpeg" type="audio/mpeg">
+  </audio>
+  <audio id="background">
+    <source src="src/backgroundM.mpeg" type="audio/mpeg">
+  </audio>
+</body>
+
+</html>
